@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///home/kylenngu/src/projects/group-project-frontend-public-group-5/app/page.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <main\n      style={{\n        display: \"flex\",\n        justifyContent: \"center\",\n        alignItems: \"center\",\n        height: \"100vh\",\n        margin: 0,\n      }}\n    >\n      <p>test</p>\n    </main>\n  );\n}\n"],"names":["Home","style","display","justifyContent","alignItems","height","margin"],"mappings":";;;;;;AAAe,SAASA;IACtB,qBACE,8OAAC;QACCC,OAAO;YACLC,SAAS;YACTC,gBAAgB;YAChBC,YAAY;YACZC,QAAQ;YACRC,QAAQ;QACV;kBAEA,cAAA,8OAAC;sBAAE;;;;;;;;;;;AAGT"}}]
+}
