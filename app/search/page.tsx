@@ -5,7 +5,7 @@ export default function SearchPage() {
     const [mediaType, setMediaType] = useState(null);
     const [results, setResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     
     const handleSearch = async () => {
         if (!mediaType || !searchText) return;
