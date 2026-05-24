@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
-  const [mediaType, setMediaType] = useState<"MOVIE" | "TV" | null>(null);
+  const [mediaType, setMediaType] = useState<"MOVIE" | "TV">("MOVIE");
   const [results, setResults] = useState<
     { id: number; title: string; release_date: string; poster_path: string }[]
   >([]);
@@ -12,7 +12,7 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async () => {
-    if (!mediaType || !searchText) return;
+    if (!searchText) return;
     try {
       setIsLoading(true);
       const url =
@@ -248,7 +248,7 @@ export default function SearchPage() {
                   </h2>
                   <div style={{ marginTop: 18 }}>
                     <Link
-                      href={`/${mediaType!.toLowerCase()}/${item.id}`}
+                      href={`/${mediaType.toLowerCase()}/${item.id}`}
                       style={{
                         display: "inline-block",
                         padding: "10px 16px",
