@@ -94,7 +94,7 @@ export default function MovieDetailPage() {
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
         {/* Back link */}
         <Link
-          href="/search"
+          href="/"
           style={{
             color: "#2563eb",
             fontSize: 14,
@@ -102,7 +102,7 @@ export default function MovieDetailPage() {
             fontWeight: 600,
           }}
         >
-          ← Back to search
+          ← Home
         </Link>
 
         {/* Hero */}
