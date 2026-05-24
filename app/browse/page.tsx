@@ -1,4 +1,6 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://group-project-backend-group-4.onrender.com";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  "https://group-project-backend-group-4.onrender.com";
 
 type MovieListItem = {
   id: number;
@@ -15,7 +17,9 @@ async function getPopularMovies(): Promise<MovieListItem[]> {
   const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
-    throw new Error(`Failed to load popular movies from ${url}: ${res.status} ${res.statusText}`);
+    throw new Error(
+      `Failed to load popular movies from ${url}: ${res.status} ${res.statusText}`,
+    );
   }
 
   return res.json();
@@ -40,7 +44,8 @@ export default async function BrowsePage() {
     if (error instanceof Error) {
       errorMessage = error.message;
     } else {
-      errorMessage = "An unexpected error occurred while loading popular movies.";
+      errorMessage =
+        "An unexpected error occurred while loading popular movies.";
     }
   }
 
@@ -48,23 +53,48 @@ export default async function BrowsePage() {
     <main style={{ padding: "24px 16px", fontFamily: "system-ui, sans-serif" }}>
       <section style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ marginBottom: 24 }}>
-          <p style={{ margin: 0, color: "#444", fontSize: 14, textTransform: "uppercase", letterSpacing: "0.12em" }}>
+          <p
+            style={{
+              margin: 0,
+              color: "#444",
+              fontSize: 14,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+            }}
+          >
             Browse
           </p>
           <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Popular Movies
           </h1>
-          <p style={{ marginTop: 12, maxWidth: 680, lineHeight: 1.7, color: "#555" }}>
+          <p
+            style={{
+              marginTop: 12,
+              maxWidth: 680,
+              lineHeight: 1.7,
+              color: "#555",
+            }}
+          >
             See what people are watching right now.
           </p>
         </div>
 
         {errorMessage ? (
-          <div style={{ padding: 20, background: "#ffe8e8", color: "#842029", borderRadius: 14, border: "1px solid #f5c2c7" }}>
+          <div
+            style={{
+              padding: 20,
+              background: "#ffe8e8",
+              color: "#842029",
+              borderRadius: 14,
+              border: "1px solid #f5c2c7",
+            }}
+          >
             <strong>Unable to load browse content.</strong>
             <p style={{ margin: "8px 0 0" }}>{errorMessage}</p>
             <p style={{ margin: "8px 0 0", fontSize: 14, color: "#5c5c5c" }}>
-              Confirm that the partner API base URL is set in <code>NEXT_PUBLIC_API_BASE_URL</code> or that the default local URL is accessible.
+              Confirm that the partner API base URL is set in{" "}
+              <code>NEXT_PUBLIC_API_BASE_URL</code> or that the default local
+              URL is accessible.
             </p>
           </div>
         ) : (
@@ -111,19 +141,44 @@ export default async function BrowsePage() {
                     </div>
                   )}
                 </div>
-                <div style={{ padding: 18, flex: 1, display: "flex", flexDirection: "column" }}>
+                <div
+                  style={{
+                    padding: 18,
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
                   <div>
-                    <p style={{ margin: 0, color: "#2563eb", fontSize: 12, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                      {movie.original_language.toUpperCase()} • {formatReleaseDate(movie.release_date)}
+                    <p
+                      style={{
+                        margin: 0,
+                        color: "#2563eb",
+                        fontSize: 12,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {movie.original_language.toUpperCase()} •{" "}
+                      {formatReleaseDate(movie.release_date)}
                     </p>
-                    <h2 style={{ margin: "10px 0 0", fontSize: 20 }}>{movie.title}</h2>
+                    <h2 style={{ margin: "10px 0 0", fontSize: 20 }}>
+                      {movie.title}
+                    </h2>
                   </div>
-                  <p style={{ marginTop: 12, color: "#475569", lineHeight: 1.65, flex: 1 }}>
+                  <p
+                    style={{
+                      marginTop: 12,
+                      color: "#475569",
+                      lineHeight: 1.65,
+                      flex: 1,
+                    }}
+                  >
                     {movie.overview || "No description available."}
                   </p>
                   <div style={{ marginTop: 18 }}>
                     <a
-                      href={`/movies/${movie.id}`}
+                      href={`/movie/${movie.id}`}
                       style={{
                         display: "inline-block",
                         padding: "10px 16px",
