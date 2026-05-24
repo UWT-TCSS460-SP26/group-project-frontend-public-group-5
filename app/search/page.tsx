@@ -67,9 +67,10 @@ export default function SearchPage() {
       {isLoading && <p role="status">Loading...</p>}
       {error && <p>{error}</p>}
       {results.map((item) => (
-        <div key={item.id}>
-          <h3>{item.title}</h3>
-          <p>{item.release_date}</p>
+        <div key={item.id} style={{ textAlign: "center",backgroundColor: "#b0c4d8" }}>
+          <h3 style={{ fontSize: "50px", color: "black", margin: 0 }}>{item.title}</h3>
+          <p style={{ fontSize: "30px", color: "grey", margin: 0 }}>{item.release_date}</p>
+          <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} />
         </div>
       ))}
     </>
