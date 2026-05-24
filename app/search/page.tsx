@@ -42,6 +42,17 @@ export default function SearchPage() {
       }}
     >
       <section style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <Link
+          href="/"
+          style={{
+            color: "#2563eb",
+            fontSize: 14,
+            textDecoration: "none",
+            fontWeight: 600,
+          }}
+        >
+          ← Home
+        </Link>
         {/* Header */}
         <div style={{ marginBottom: 32 }}>
           <p
