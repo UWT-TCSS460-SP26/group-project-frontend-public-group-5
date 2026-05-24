@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
   const [mediaType, setMediaType] = useState<"MOVIE" | "TV" | null>(null);
   const [results, setResults] = useState<
-    { id: number; title: string; release_date: string }[]
+    { id: number; title: string; release_date: string; poster_path: string }[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,10 +68,22 @@ export default function SearchPage() {
       {isLoading && <p role="status">Loading...</p>}
       {error && <p>{error}</p>}
       {results.map((item) => (
-        <div key={item.id} style={{ textAlign: "center",backgroundColor: "#b0c4d8" }}>
-          <h3 style={{ fontSize: "50px", color: "black", margin: 0 }}>{item.title}</h3>
-          <p style={{ fontSize: "30px", color: "grey", margin: 0 }}>{item.release_date}</p>
-          <img src={`https://image.tmdb.org/t/p/w500${item.poster_path}`} alt={item.title} />
+        <div
+          key={item.id}
+          style={{ textAlign: "center", backgroundColor: "#b0c4d8" }}
+        >
+          <Link href={`/${mediaType!.toLowerCase()}/${item.id}`}>
+            <h3 style={{ fontSize: "50px", color: "black", margin: 0 }}>
+              {item.title}
+            </h3>
+          </Link>
+          <p style={{ fontSize: "30px", color: "grey", margin: 0 }}>
+            {item.release_date}
+          </p>
+          <img
+            src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+            alt={item.title}
+          />
         </div>
       ))}
     </>
