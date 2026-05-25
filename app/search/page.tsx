@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import AuthButton from "@/components/AuthButton";
 
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
@@ -35,13 +36,24 @@ export default function SearchPage() {
   return (
     <main
       style={{
-        padding: "24px 16px",
+        padding: "0 0 24px",
         fontFamily: "system-ui, sans-serif",
         background: "#f8fafc",
         minHeight: "100vh",
       }}
     >
-      <section style={{ maxWidth: 1200, margin: "0 auto" }}>
+      {/* Top nav */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "12px 16px",
+        }}
+      >
+        <AuthButton />
+      </div>
+
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
         <Link
           href="/"
           style={{

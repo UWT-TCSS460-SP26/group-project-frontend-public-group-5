@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AuthButton from "@/components/AuthButton";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
   "https://group-project-backend-group-4.onrender.com";
@@ -51,8 +52,26 @@ export default async function BrowsePage() {
   }
 
   return (
-    <main style={{ padding: "24px 16px", fontFamily: "system-ui, sans-serif" }}>
-      <section style={{ maxWidth: 1200, margin: "0 auto" }}>
+    <main
+      style={{
+        padding: "0 0 24px",
+        fontFamily: "system-ui, sans-serif",
+        background: "#f8fafc",
+        minHeight: "100vh",
+      }}
+    >
+      {/* Top nav */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "12px 16px",
+        }}
+      >
+        <AuthButton />
+      </div>
+
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
         <Link
           href="/"
           style={{

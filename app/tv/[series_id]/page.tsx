@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import AuthButton from "@/components/AuthButton";
 
 type TVDetail = {
   id: number;
@@ -87,11 +88,22 @@ export default function TVDetailPage() {
       style={{
         minHeight: "100vh",
         background: "#f8fafc",
-        padding: "24px 16px",
+        padding: "0 0 24px",
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      {/* Top nav */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "12px 16px",
+        }}
+      >
+        <AuthButton />
+      </div>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 16px" }}>
         {/* Back link */}
         <Link
           href="/"
