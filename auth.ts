@@ -14,6 +14,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           audience: process.env.AUTH_TCSS460_AUDIENCE,
         },
       },
+      client: {
+        token_endpoint_auth_method: "client_secret_post",
+      },
     },
   ],
   callbacks: {
