@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import AuthButton from "@/components/AuthButton";
+import RatingWidget from "@/components/RatingWidget";
 
 type MovieDetail = {
   id: number;
@@ -31,7 +32,7 @@ export default function MovieDetailPage() {
   const [movie, setMovie] = useState<MovieDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadMovie = useCallback(() => {
     fetch(`/api/movies/${movie_id}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Server returned ${r.status}`);
@@ -40,6 +41,10 @@ export default function MovieDetailPage() {
       .then(setMovie)
       .catch(() => setError("Failed to load movie details."));
   }, [movie_id]);
+
+  useEffect(() => {
+    loadMovie();
+  }, [loadMovie]);
 
   if (error)
     return (
@@ -239,6 +244,9 @@ export default function MovieDetailPage() {
           </div>
         </div>
 
+        {/* Rating */}
+        <RatingWidget tmdbId={movie.id} mediaType="MOVIE" onRatingChange={loadMovie} />
+
         {/* Community */}
         <div
           style={{
@@ -363,17 +371,6 @@ export default function MovieDetailPage() {
               No reviews yet.
             </p>
           )}
-
-          <p
-            style={{
-              marginTop: 24,
-              color: "#94a3b8",
-              fontStyle: "italic",
-              fontSize: 14,
-            }}
-          >
-            Sign in to rate
-          </p>
         </div>
       </div>
     </main>
