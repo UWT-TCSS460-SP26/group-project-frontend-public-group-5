@@ -32,4 +32,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
   },
+  // Ensure a secret is provided from env (AUTH_SECRET or NEXTAUTH_SECRET)
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
 });
