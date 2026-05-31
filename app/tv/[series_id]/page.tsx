@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import AuthButton from "@/components/AuthButton";
+import RatingWidget from "@/components/RatingWidget";
 
 type TVDetail = {
   id: number;
@@ -31,7 +32,7 @@ export default function TVDetailPage() {
   const [show, setShow] = useState<TVDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadShow = useCallback(() => {
     fetch(`/api/tv/${series_id}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Server returned ${r.status}`);
@@ -40,6 +41,10 @@ export default function TVDetailPage() {
       .then(setShow)
       .catch(() => setError("Failed to load TV show details."));
   }, [series_id]);
+
+  useEffect(() => {
+    loadShow();
+  }, [loadShow]);
 
   if (error)
     return (
@@ -237,6 +242,9 @@ export default function TVDetailPage() {
           </div>
         </div>
 
+        {/* Rating */}
+        <RatingWidget tmdbId={show.id} mediaType="TV_SHOW" onRatingChange={loadShow} />
+
         {/* Community */}
         <div
           style={{
@@ -361,17 +369,6 @@ export default function TVDetailPage() {
               No reviews yet.
             </p>
           )}
-
-          <p
-            style={{
-              marginTop: 24,
-              color: "#94a3b8",
-              fontStyle: "italic",
-              fontSize: 14,
-            }}
-          >
-            Sign in to rate
-          </p>
         </div>
       </div>
     </main>
