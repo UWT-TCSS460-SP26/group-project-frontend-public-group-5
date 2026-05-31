@@ -52,7 +52,7 @@ export default function RatingsList({
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -79,7 +79,10 @@ export default function RatingsList({
         }}
       >
         <p>You haven't rated anything yet.</p>
-        <Link href="/browse" style={{ color: "#2563eb", textDecoration: "none" }}>
+        <Link
+          href="/browse"
+          style={{ color: "#2563eb", textDecoration: "none" }}
+        >
           Start rating movies and TV shows
         </Link>
       </div>
@@ -122,7 +125,9 @@ export default function RatingsList({
               }}
             >
               <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                >
                   <h3
                     style={{
                       margin: 0,
@@ -168,8 +173,8 @@ export default function RatingsList({
                       gap: "4px",
                     }}
                   >
-                    {"★".repeat(rating.score)}
-                    {"☆".repeat(10 - rating.score)}
+                    {"★".repeat(Math.min(Math.max(rating.score, 0), 5))}
+                    {"☆".repeat(5 - Math.min(Math.max(rating.score, 0), 5))}
                     <span
                       style={{
                         fontSize: 14,
@@ -177,7 +182,7 @@ export default function RatingsList({
                         marginLeft: "8px",
                       }}
                     >
-                      ({rating.score}/10)
+                      ({rating.score}/5)
                     </span>
                   </div>
                 </div>

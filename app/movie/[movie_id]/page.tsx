@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
 import RatingWidget from "@/components/RatingWidget";
 
 type MovieDetail = {
@@ -31,6 +31,19 @@ export default function MovieDetailPage() {
   const { movie_id } = useParams();
   const [movie, setMovie] = useState<MovieDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const apiBase =
+    process.env.NEXT_PUBLIC_API_BASE_URL ??
+    process.env.NEXT_PUBLIC_API_URL ??
+    "";
+
+  const [recentReviews, setRecentReviews] = useState<
+    MovieDetail["community"]["recentReviews"]
+  >([]);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewBody, setReviewBody] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
 
   const loadMovie = useCallback(() => {
     fetch(`/api/movies/${movie_id}`)
@@ -45,6 +58,74 @@ export default function MovieDetailPage() {
   useEffect(() => {
     loadMovie();
   }, [loadMovie]);
+
+  useEffect(() => {
+    if (movie) {
+      setRecentReviews(movie.community.recentReviews || []);
+    }
+  }, [movie]);
+
+  async function handleSubmitReview() {
+    if (!session) {
+      setReviewError("Please sign in to submit a review.");
+      return;
+    }
+    if (!reviewTitle.trim()) {
+      setReviewError("Please provide a title for your review.");
+      return;
+    }
+
+    if (!reviewBody.trim()) {
+      setReviewError("Please write a review before submitting.");
+      return;
+    }
+
+    try {
+      setSubmittingReview(true);
+      setReviewError(null);
+      const accessToken = (session as any).accessToken;
+      if (!accessToken) throw new Error("No access token available");
+
+      const res = await fetch(`${apiBase}/api/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          tmdbId: movie?.id,
+          type: "MOVIE",
+          title: reviewTitle,
+          body: reviewBody,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to submit review");
+      const created = await res.json();
+
+      // Prepend to local reviews list
+      setRecentReviews((r) => [created, ...r]);
+
+      // Update movie counts if present
+      if (movie) {
+        setMovie({
+          ...movie,
+          community: {
+            ...movie.community,
+            totalReviews: movie.community.totalReviews + 1,
+          },
+        });
+      }
+
+      // Clear form
+      setReviewTitle("");
+      setReviewBody("");
+    } catch (err: any) {
+      setReviewError(err?.message || "Failed to submit review");
+    } finally {
+      setSubmittingReview(false);
+    }
+  }
 
   if (error)
     return (
@@ -97,31 +178,7 @@ export default function MovieDetailPage() {
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      {/* Top nav */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "12px 16px",
-        }}
-      >
-        <AuthButton />
-      </div>
-
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 16px" }}>
-        {/* Back link */}
-        <Link
-          href="/"
-          style={{
-            color: "#2563eb",
-            fontSize: 14,
-            textDecoration: "none",
-            fontWeight: 600,
-          }}
-        >
-          ← Home
-        </Link>
-
         {/* Hero */}
         <div
           style={{ display: "flex", gap: 32, marginTop: 24, flexWrap: "wrap" }}
@@ -245,7 +302,11 @@ export default function MovieDetailPage() {
         </div>
 
         {/* Rating */}
-        <RatingWidget tmdbId={movie.id} mediaType="MOVIE" onRatingChange={loadMovie} />
+        <RatingWidget
+          tmdbId={movie.id}
+          mediaType="MOVIE"
+          onRatingChange={loadMovie}
+        />
 
         {/* Community */}
         <div
@@ -315,17 +376,86 @@ export default function MovieDetailPage() {
             ))}
           </div>
 
-          {movie.community.recentReviews.length > 0 ? (
-            <>
-              <h3
-                style={{ margin: "0 0 16px", fontSize: 17, color: "#0f172a" }}
-              >
-                Recent Reviews
-              </h3>
+          <>
+            <h3 style={{ margin: "0 0 16px", fontSize: 17, color: "#0f172a" }}>
+              Recent Reviews
+            </h3>
+
+            {/* Write review form (always shown) */}
+            <div style={{ marginBottom: 16 }}>
+              {session ? (
+                <div
+                  style={{
+                    background: "#fff",
+                    padding: 12,
+                    borderRadius: 8,
+                    border: "1px solid #e2e8f0",
+                  }}
+                >
+                  <div style={{ marginBottom: 8 }}>
+                    <input
+                      type="text"
+                      placeholder="Title"
+                      value={reviewTitle}
+                      onChange={(e) => setReviewTitle(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: 8,
+                        border: "1px solid #e2e8f0",
+                        borderRadius: 6,
+                      }}
+                    />
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <textarea
+                      placeholder="Write your review..."
+                      value={reviewBody}
+                      onChange={(e) => setReviewBody(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: 8,
+                        border: "1px solid #e2e8f0",
+                        borderRadius: 6,
+                        minHeight: 100,
+                      }}
+                    />
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      onClick={handleSubmitReview}
+                      disabled={submittingReview}
+                      style={{
+                        padding: "8px 12px",
+                        background: "#2563eb",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                      }}
+                    >
+                      {submittingReview ? "Posting..." : "Post Review"}
+                    </button>
+                    {reviewError && (
+                      <div style={{ color: "#dc2626", fontSize: 13 }}>
+                        {reviewError}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p>
+                  <a href="/api/auth/signin" style={{ color: "#2563eb" }}>
+                    Sign in
+                  </a>{" "}
+                  to write a review
+                </p>
+              )}
+            </div>
+
+            {recentReviews.length > 0 ? (
               <div
                 style={{ display: "flex", flexDirection: "column", gap: 16 }}
               >
-                {movie.community.recentReviews.map((review) => (
+                {recentReviews.map((review) => (
                   <div
                     key={review.id}
                     style={{
@@ -365,12 +495,12 @@ export default function MovieDetailPage() {
                   </div>
                 ))}
               </div>
-            </>
-          ) : (
-            <p style={{ color: "#94a3b8", fontStyle: "italic" }}>
-              No reviews yet.
-            </p>
-          )}
+            ) : (
+              <p style={{ color: "#94a3b8", fontStyle: "italic" }}>
+                No reviews yet.
+              </p>
+            )}
+          </>
         </div>
       </div>
     </main>

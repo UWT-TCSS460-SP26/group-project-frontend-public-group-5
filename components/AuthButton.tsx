@@ -33,17 +33,6 @@ export default function AuthButton() {
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <Link
-        href="/profile"
-        style={{
-          fontSize: 14,
-          color: "#2563eb",
-          fontFamily: "system-ui, sans-serif",
-          textDecoration: "none",
-        }}
-      >
-        Profile
-      </Link>
       <span
         style={{
           fontSize: 14,

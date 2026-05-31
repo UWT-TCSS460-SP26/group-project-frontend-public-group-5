@@ -75,7 +75,7 @@ export default function ProfilePage() {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
-            }
+            },
           );
 
           if (!profileRes.ok) {
@@ -106,7 +106,7 @@ export default function ProfilePage() {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
-            }
+            },
           );
 
           if (ratingsRes.ok) {
@@ -121,7 +121,7 @@ export default function ProfilePage() {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
-            }
+            },
           );
 
           if (reviewsRes.ok) {
@@ -134,7 +134,9 @@ export default function ProfilePage() {
           if (process.env.NODE_ENV !== "production") {
             console.debug(err);
           }
-          setError(err instanceof Error ? err.message : "Failed to load profile");
+          setError(
+            err instanceof Error ? err.message : "Failed to load profile",
+          );
         } finally {
           setLoading(false);
         }
@@ -146,7 +148,9 @@ export default function ProfilePage() {
 
   if (status === "loading") {
     return (
-      <main style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px" }}>
+      <main
+        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px" }}
+      >
         <div style={{ textAlign: "center", color: "#0f172a" }}>
           Loading profile...
         </div>
@@ -156,7 +160,9 @@ export default function ProfilePage() {
 
   if (status === "unauthenticated") {
     return (
-      <main style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px" }}>
+      <main
+        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px" }}
+      >
         <div
           style={{
             maxWidth: 600,
@@ -176,16 +182,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <main style={{ minHeight: "100vh", background: "#f8fafc", color: "#0f172a" }}>
-      {/* Header */}
-      <div style={{ borderBottom: "1px solid #e2e8f0", padding: "16px" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <Link href="/" style={{ color: "#2563eb", textDecoration: "none" }}>
-            ← Back
-          </Link>
-        </div>
-      </div>
-
+    <main
+      style={{ minHeight: "100vh", background: "#f8fafc", color: "#0f172a" }}
+    >
       {/* Main content */}
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 16px" }}>
         {/* Profile header */}
@@ -204,7 +203,9 @@ export default function ProfilePage() {
         )}
 
         {/* Tabs */}
-        <div style={{ marginBottom: "20px", borderBottom: "1px solid #e2e8f0" }}>
+        <div
+          style={{ marginBottom: "20px", borderBottom: "1px solid #e2e8f0" }}
+        >
           <button
             onClick={() => setActiveTab("ratings")}
             style={{
@@ -241,7 +242,9 @@ export default function ProfilePage() {
 
         {/* Content */}
         {loading ? (
-          <div style={{ textAlign: "center", padding: "40px", color: "#64748b" }}>
+          <div
+            style={{ textAlign: "center", padding: "40px", color: "#64748b" }}
+          >
             Loading your {activeTab}...
           </div>
         ) : activeTab === "ratings" ? (

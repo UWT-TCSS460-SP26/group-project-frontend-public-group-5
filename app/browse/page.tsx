@@ -1,5 +1,4 @@
 import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
   "https://group-project-backend-group-4.onrender.com";
@@ -60,41 +59,8 @@ export default async function BrowsePage() {
         minHeight: "100vh",
       }}
     >
-      {/* Top nav */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "12px 16px",
-        }}
-      >
-        <AuthButton />
-      </div>
-
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
-        <Link
-          href="/"
-          style={{
-            color: "#2563eb",
-            fontSize: 14,
-            textDecoration: "none",
-            fontWeight: 600,
-          }}
-        >
-          ← Home
-        </Link>
         <div style={{ marginBottom: 24 }}>
-          <p
-            style={{
-              margin: 0,
-              color: "#444",
-              fontSize: 14,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-            }}
-          >
-            Browse
-          </p>
           <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
             Popular Movies
           </h1>

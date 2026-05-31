@@ -1,5 +1,4 @@
 import Link from "next/link";
-import AuthButton from "@/components/AuthButton";
 
 export default function Home() {
   return (
@@ -12,17 +11,6 @@ export default function Home() {
         flexDirection: "column",
       }}
     >
-      {/* Top nav */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          padding: "12px 16px",
-        }}
-      >
-        <AuthButton />
-      </div>
-
       {/* Centered content */}
       <div
         style={{
