@@ -27,70 +27,92 @@ export default function RatingWidget({
     process.env.NEXT_PUBLIC_API_URL ??
     "";
 
-  useEffect(() => {
-    if (!session) return;
+    useEffect(() => {
+        if (!session) return;
+        async function checkExisting() {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings/me`, {
+                headers: {
+                    Authorization: `Bearer ${(session as any).accessToken}`,
+                },
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            const match = data.data?.find(
+                (r: any) => r.media?.tmdbId === tmdbId && r.media?.type === mediaType
+            );
+            if (match) {
+                setExistingRating({ id: match.id, score: match.score });
+                setSelectedRating(match.score);
+            }   
+        }
+        checkExisting();
+    }, [session, tmdbId, mediaType]);
 
-    async function checkExisting() {
-      const res = await fetch(`${apiBase}/api/ratings/me`, {
-        headers: {
-          Authorization: `Bearer ${(session as any).accessToken}`,
-        },
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      const match = data.data?.find(
-        (r: any) => r.media?.tmdbId === tmdbId && r.media?.type === mediaType,
-      );
-      if (match) {
-        setExistingRating({ id: match.id, score: match.score });
-        setSelectedRating(match.score);
-      }
+    async function handleSubmit() {
+        if (!selectedRating) return;
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+        try {
+            if (existingRating) {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings/${existingRating.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${(session as any).accessToken}`,
+                    },
+                    body: JSON.stringify({ score: selectedRating }),
+                });
+                if (!res.ok) throw new Error("Failed to update rating");
+                setExistingRating({ ...existingRating, score: selectedRating });
+                setSuccess("Rating updated!");
+                onRatingChange?.();
+            } else {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${(session as any).accessToken}`,
+                    },
+                    body: JSON.stringify({ tmdbId, type: mediaType, score: selectedRating }),
+                });
+                if (!res.ok) throw new Error("Failed to submit rating");
+                const data = await res.json();
+                setExistingRating({ id: data.id, score: selectedRating });
+                setSuccess("Rating submitted!");
+                onRatingChange?.();
+            }
+        } catch (e: any) {
+            setError(e.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
     }
     checkExisting();
   }, [session, tmdbId, mediaType]);
 
-  async function handleSubmit() {
-    if (!selectedRating) return;
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      if (existingRating) {
-        const res = await fetch(`${apiBase}/api/ratings/${existingRating.id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${(session as any).accessToken}`,
-          },
-          body: JSON.stringify({ score: selectedRating }),
-        });
-        if (!res.ok) throw new Error("Failed to update rating");
-        setExistingRating({ ...existingRating, score: selectedRating });
-        setSuccess("Rating updated!");
-        onRatingChange?.();
-      } else {
-        const res = await fetch(`${apiBase}/api/ratings`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${(session as any).accessToken}`,
-          },
-          body: JSON.stringify({
-            tmdbId,
-            type: mediaType,
-            score: selectedRating,
-          }),
-        });
-        if (!res.ok) throw new Error("Failed to submit rating");
-        const data = await res.json();
-        setExistingRating({ id: data.id, score: selectedRating });
-        setSuccess("Rating submitted!");
-        onRatingChange?.();
-      }
-    } catch (e: any) {
-      setError(e.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+    async function handleDelete() {
+        if (!existingRating) return;
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings/${existingRating.id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${(session as any).accessToken}`,
+                },
+            });
+            if (!res.ok) throw new Error("Failed to delete rating");
+            setExistingRating(null);
+            setSelectedRating(null);
+            setSuccess("Rating removed.");
+            onRatingChange?.();
+        } catch (e: any) {
+            setError(e.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
     }
   }
 
