@@ -19,7 +19,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
     useEffect(() => {
         if (!session) return;
         async function checkExisting() {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ratings/me`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings/me`, {
                 headers: {
                     Authorization: `Bearer ${(session as any).accessToken}`,
                 },
@@ -44,7 +44,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
         setSuccess(null);
         try {
             if (existingRating) {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ratings/${existingRating.id}`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings/${existingRating.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -57,7 +57,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
                 setSuccess("Rating updated!");
                 onRatingChange?.();
             } else {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ratings`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
         setError(null);
         setSuccess(null);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/ratings/${existingRating.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/ratings/${existingRating.id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${(session as any).accessToken}`,
