@@ -45,6 +45,17 @@ export default function MovieDetailPage() {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
 
+  const [userReview, setUserReview] = useState<{
+    id: number;
+    title: string | null;
+    body: string;
+  } | null>(null);
+  const [editingReview, setEditingReview] = useState(false);
+  const [editReviewTitle, setEditReviewTitle] = useState("");
+  const [editReviewBody, setEditReviewBody] = useState("");
+  const [updatingReview, setUpdatingReview] = useState(false);
+  const [deletingReview, setDeletingReview] = useState(false);
+
   const loadMovie = useCallback(() => {
     fetch(`/api/movies/${movie_id}`)
       .then((r) => {
@@ -64,6 +75,23 @@ export default function MovieDetailPage() {
       setRecentReviews(movie.community.recentReviews || []);
     }
   }, [movie]);
+
+  useEffect(() => {
+    if (!session || !movie) return;
+    const accessToken = (session as any).accessToken;
+    if (!accessToken) return;
+    fetch(`${apiBase}/api/reviews/me`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const match = data?.data?.find(
+          (r: any) => r.media?.tmdbId === movie.id && r.media?.type === "MOVIE",
+        );
+        if (match) setUserReview({ id: match.id, title: match.title, body: match.body });
+      })
+      .catch(() => {});
+  }, [session, movie]);
 
   async function handleSubmitReview() {
     if (!session) {
@@ -120,10 +148,63 @@ export default function MovieDetailPage() {
       // Clear form
       setReviewTitle("");
       setReviewBody("");
+      setUserReview({ id: created.id, title: reviewTitle, body: reviewBody });
     } catch (err: any) {
       setReviewError(err?.message || "Failed to submit review");
     } finally {
       setSubmittingReview(false);
+    }
+  }
+
+  async function handleUpdateReview() {
+    if (!userReview) return;
+    if (!editReviewBody.trim()) return;
+    try {
+      setUpdatingReview(true);
+      const accessToken = (session as any).accessToken;
+      const res = await fetch(`${apiBase}/api/reviews/${userReview.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ title: editReviewTitle || null, body: editReviewBody }),
+      });
+      if (!res.ok) throw new Error("Failed to update review");
+      setUserReview({ ...userReview, title: editReviewTitle || null, body: editReviewBody });
+      setEditingReview(false);
+    } catch (err: any) {
+      setReviewError(err?.message || "Failed to update review");
+    } finally {
+      setUpdatingReview(false);
+    }
+  }
+
+  async function handleDeleteReview() {
+    if (!userReview) return;
+    if (!window.confirm("Are you sure you want to delete your review?")) return;
+    try {
+      setDeletingReview(true);
+      const accessToken = (session as any).accessToken;
+      const res = await fetch(`${apiBase}/api/reviews/${userReview.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) throw new Error("Failed to delete review");
+      setUserReview(null);
+      if (movie) {
+        setMovie({
+          ...movie,
+          community: {
+            ...movie.community,
+            totalReviews: movie.community.totalReviews - 1,
+          },
+        });
+      }
+    } catch (err: any) {
+      setReviewError(err?.message || "Failed to delete review");
+    } finally {
+      setDeletingReview(false);
     }
   }
 
@@ -345,10 +426,10 @@ export default function MovieDetailPage() {
                   flex: "1 1 120px",
                   background: "#fff",
                   border: "1px solid #e2e8f0",
-                  borderRadius: 14,
+                  borderRadius: 12,
                   padding: "16px 20px",
                   textAlign: "center",
-                  boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
+                  boxShadow: "0 2px 8px rgba(15,23,42,0.05)",
                 }}
               >
                 <p
@@ -377,19 +458,109 @@ export default function MovieDetailPage() {
           </div>
 
           <>
-            <h3 style={{ margin: "0 0 16px", fontSize: 17, color: "#0f172a" }}>
-              Recent Reviews
-            </h3>
-
-            {/* Write review form (always shown) */}
-            <div style={{ marginBottom: 16 }}>
-              {session ? (
+            {/* Review section */}
+            <div style={{ marginBottom: 32 }}>
+              {!session ? (
+                <p>
+                  <a href="/api/auth/signin" style={{ color: "#2563eb" }}>
+                    Sign in
+                  </a>{" "}
+                  to write a review
+                </p>
+              ) : userReview ? (
+                // User already has a review — show it with edit/delete
                 <div
                   style={{
                     background: "#fff",
-                    padding: 12,
-                    borderRadius: 8,
+                    padding: 16,
+                    borderRadius: 12,
                     border: "1px solid #e2e8f0",
+                    boxShadow: "0 2px 8px rgba(15,23,42,0.05)",
+                  }}
+                >
+                  <p style={{ margin: "0 0 8px", fontSize: 12, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    Your Review
+                  </p>
+                  {editingReview ? (
+                    <div>
+                      <div style={{ marginBottom: 8 }}>
+                        <input
+                          type="text"
+                          placeholder="Title (optional)"
+                          value={editReviewTitle}
+                          onChange={(e) => setEditReviewTitle(e.target.value)}
+                          style={{ width: "100%", padding: 8, border: "1px solid #e2e8f0", borderRadius: 8, boxSizing: "border-box" }}
+                        />
+                      </div>
+                      <div style={{ marginBottom: 8 }}>
+                        <textarea
+                          placeholder="Write your review..."
+                          value={editReviewBody}
+                          onChange={(e) => setEditReviewBody(e.target.value)}
+                          style={{ width: "100%", padding: 8, border: "1px solid #e2e8f0", borderRadius: 8, minHeight: 100, boxSizing: "border-box", fontFamily: "system-ui, sans-serif" }}
+                        />
+                      </div>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button
+                          onClick={handleUpdateReview}
+                          disabled={updatingReview || !editReviewBody.trim()}
+                          style={{ padding: "8px 18px", fontSize: 13, fontWeight: 600, background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, cursor: updatingReview ? "not-allowed" : "pointer", opacity: updatingReview ? 0.6 : 1 }}
+                        >
+                          {updatingReview ? "Saving..." : "Save"}
+                        </button>
+                        <button
+                          onClick={() => setEditingReview(false)}
+                          disabled={updatingReview}
+                          style={{ padding: "8px 14px", fontSize: 13, fontWeight: 600, background: "#fff", color: "#475569", border: "1px solid #e2e8f0", borderRadius: 8, cursor: "pointer" }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      {userReview.title && (
+                        <strong style={{ display: "block", marginBottom: 4, fontSize: 15, color: "#0f172a" }}>
+                          {userReview.title}
+                        </strong>
+                      )}
+                      <p style={{ margin: "0 0 12px", color: "#475569", lineHeight: 1.65 }}>
+                        {userReview.body}
+                      </p>
+                      <div style={{ display: "flex", gap: 8 }}>
+                        <button
+                          onClick={() => {
+                            setEditReviewTitle(userReview.title || "");
+                            setEditReviewBody(userReview.body);
+                            setEditingReview(true);
+                          }}
+                          style={{ padding: "8px 14px", fontSize: 13, fontWeight: 600, border: "1px solid #e2e8f0", borderRadius: 8, background: "#fff", color: "#475569", cursor: "pointer" }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={handleDeleteReview}
+                          disabled={deletingReview}
+                          style={{ padding: "8px 14px", fontSize: 13, fontWeight: 600, border: "1px solid #e2e8f0", borderRadius: 8, background: "#fff", color: "#dc2626", cursor: deletingReview ? "not-allowed" : "pointer", opacity: deletingReview ? 0.6 : 1 }}
+                        >
+                          {deletingReview ? "Deleting..." : "Delete"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {reviewError && (
+                    <div style={{ marginTop: 8, background: "#fee2e2", color: "#991b1b", padding: "12px 16px", borderRadius: 8, fontSize: 13 }}>{reviewError}</div>
+                  )}
+                </div>
+              ) : (
+                // No review yet — show the submit form
+                <div
+                  style={{
+                    background: "#fff",
+                    padding: 16,
+                    borderRadius: 12,
+                    border: "1px solid #e2e8f0",
+                    boxShadow: "0 2px 8px rgba(15,23,42,0.05)",
                   }}
                 >
                   <div style={{ marginBottom: 8 }}>
@@ -398,12 +569,7 @@ export default function MovieDetailPage() {
                       placeholder="Title"
                       value={reviewTitle}
                       onChange={(e) => setReviewTitle(e.target.value)}
-                      style={{
-                        width: "100%",
-                        padding: 8,
-                        border: "1px solid #e2e8f0",
-                        borderRadius: 6,
-                      }}
+                      style={{ width: "100%", padding: 8, border: "1px solid #e2e8f0", borderRadius: 8, boxSizing: "border-box" }}
                     />
                   </div>
                   <div style={{ marginBottom: 8 }}>
@@ -411,45 +577,28 @@ export default function MovieDetailPage() {
                       placeholder="Write your review..."
                       value={reviewBody}
                       onChange={(e) => setReviewBody(e.target.value)}
-                      style={{
-                        width: "100%",
-                        padding: 8,
-                        border: "1px solid #e2e8f0",
-                        borderRadius: 6,
-                        minHeight: 100,
-                      }}
+                      style={{ width: "100%", padding: 8, border: "1px solid #e2e8f0", borderRadius: 8, minHeight: 100, fontFamily: "system-ui, sans-serif", boxSizing: "border-box" }}
                     />
                   </div>
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <button
                       onClick={handleSubmitReview}
                       disabled={submittingReview}
-                      style={{
-                        padding: "8px 12px",
-                        background: "#2563eb",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 6,
-                      }}
+                      style={{ padding: "8px 18px", fontSize: 13, fontWeight: 600, background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, cursor: submittingReview ? "not-allowed" : "pointer", opacity: submittingReview ? 0.6 : 1 }}
                     >
                       {submittingReview ? "Posting..." : "Post Review"}
                     </button>
                     {reviewError && (
-                      <div style={{ color: "#dc2626", fontSize: 13 }}>
-                        {reviewError}
-                      </div>
+                      <div style={{ background: "#fee2e2", color: "#991b1b", padding: "12px 16px", borderRadius: 8, fontSize: 13 }}>{reviewError}</div>
                     )}
                   </div>
                 </div>
-              ) : (
-                <p>
-                  <a href="/api/auth/signin" style={{ color: "#2563eb" }}>
-                    Sign in
-                  </a>{" "}
-                  to write a review
-                </p>
               )}
             </div>
+
+            <h3 style={{ margin: "0 0 16px", fontSize: 17, color: "#0f172a" }}>
+              Recent Reviews
+            </h3>
 
             {recentReviews.length > 0 ? (
               <div
@@ -461,9 +610,9 @@ export default function MovieDetailPage() {
                     style={{
                       background: "#fff",
                       border: "1px solid #e2e8f0",
-                      borderRadius: 14,
+                      borderRadius: 12,
                       padding: "18px 20px",
-                      boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
+                      boxShadow: "0 2px 8px rgba(15,23,42,0.05)",
                     }}
                   >
                     <div

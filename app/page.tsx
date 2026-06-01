@@ -9,6 +9,7 @@ export default function Home() {
         color: "#0f172a",
         display: "flex",
         flexDirection: "column",
+        fontFamily: "system-ui, sans-serif",
       }}
     >
       {/* Centered content */}
@@ -65,10 +66,11 @@ export default function Home() {
                 style={{
                   border: "none",
                   borderRadius: 9999,
-                  padding: "14px 24px",
+                  padding: "13px 28px",
                   background: "#2563eb",
                   color: "#fff",
                   fontSize: 16,
+                  fontWeight: 600,
                   cursor: "pointer",
                 }}
               >
@@ -80,10 +82,11 @@ export default function Home() {
                 style={{
                   border: "none",
                   borderRadius: 9999,
-                  padding: "14px 24px",
+                  padding: "13px 28px",
                   background: "#0f172a",
                   color: "#fff",
                   fontSize: 16,
+                  fontWeight: 600,
                   cursor: "pointer",
                 }}
               >

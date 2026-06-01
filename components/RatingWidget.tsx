@@ -121,7 +121,7 @@ export default function RatingWidget({
   if (!session) {
     return (
       <p>
-        <a href="/api/auth/signin">Sign in</a> to rate
+        <a href="/api/auth/signin" style={{ color: "#2563eb" }}>Sign in</a> to rate
       </p>
     );
   }
@@ -165,14 +165,14 @@ export default function RatingWidget({
           onClick={handleSubmit}
           disabled={loading || selectedRating === null}
           style={{
-            padding: "8px 20px",
+            padding: "8px 18px",
             borderRadius: 8,
             background: selectedRating === null ? "#e2e8f0" : "#2563eb",
             color: selectedRating === null ? "#94a3b8" : "#fff",
             border: "none",
             fontWeight: 600,
             cursor: selectedRating === null ? "not-allowed" : "pointer",
-            fontSize: 14,
+            fontSize: 13,
           }}
         >
           {loading ? "Saving..." : existingRating ? "Update" : "Submit"}
@@ -182,14 +182,15 @@ export default function RatingWidget({
             onClick={handleDelete}
             disabled={loading}
             style={{
-              padding: "8px 20px",
+              padding: "8px 14px",
               borderRadius: 8,
-              background: "#fee2e2",
-              color: "#b91c1c",
-              border: "none",
+              background: "#fff",
+              color: "#dc2626",
+              border: "1px solid #e2e8f0",
               fontWeight: 600,
-              cursor: "pointer",
-              fontSize: 14,
+              cursor: loading ? "not-allowed" : "pointer",
+              fontSize: 13,
+              opacity: loading ? 0.6 : 1,
             }}
           >
             Remove
@@ -202,7 +203,9 @@ export default function RatingWidget({
         </p>
       )}
       {error && (
-        <p style={{ marginTop: 8, color: "#dc2626", fontSize: 13 }}>{error}</p>
+        <div style={{ marginTop: 8, background: "#fee2e2", color: "#991b1b", padding: "12px 16px", borderRadius: 8, fontSize: 13 }}>
+          {error}
+        </div>
       )}
     </div>
   );

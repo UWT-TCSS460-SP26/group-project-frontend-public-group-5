@@ -92,9 +92,9 @@ export default function SearchPage() {
             onClick={() => setMediaType("MOVIE")}
             aria-pressed={mediaType === "MOVIE"}
             style={{
-              padding: "12px 20px",
+              padding: "10px 20px",
               borderRadius: 9999,
-              border: "1px solid #e2e8f0",
+              border: mediaType === "MOVIE" ? "none" : "1px solid #e2e8f0",
               background: mediaType === "MOVIE" ? "#2563eb" : "#fff",
               color: mediaType === "MOVIE" ? "#fff" : "#0f172a",
               fontWeight: 600,
@@ -108,9 +108,9 @@ export default function SearchPage() {
             onClick={() => setMediaType("TV")}
             aria-pressed={mediaType === "TV"}
             style={{
-              padding: "12px 20px",
+              padding: "10px 20px",
               borderRadius: 9999,
-              border: "1px solid #e2e8f0",
+              border: mediaType === "TV" ? "none" : "1px solid #e2e8f0",
               background: mediaType === "TV" ? "#2563eb" : "#fff",
               color: mediaType === "TV" ? "#fff" : "#0f172a",
               fontWeight: 600,
@@ -123,7 +123,7 @@ export default function SearchPage() {
           <button
             onClick={handleSearch}
             style={{
-              padding: "12px 24px",
+              padding: "10px 20px",
               borderRadius: 9999,
               border: "none",
               background: "#0f172a",
@@ -170,11 +170,11 @@ export default function SearchPage() {
               <article
                 key={item.id}
                 style={{
-                  borderRadius: 20,
+                  borderRadius: 16,
                   overflow: "hidden",
                   border: "1px solid #e2e8f0",
                   background: "#fff",
-                  boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
+                  boxShadow: "0 4px 16px rgba(15,23,42,0.07)",
                   display: "flex",
                   flexDirection: "column",
                   minHeight: 420,
@@ -229,7 +229,7 @@ export default function SearchPage() {
                       href={`/${mediaType.toLowerCase()}/${item.id}`}
                       style={{
                         display: "inline-block",
-                        padding: "10px 16px",
+                        padding: "10px 20px",
                         borderRadius: 9999,
                         background: "#2563eb",
                         color: "#fff",

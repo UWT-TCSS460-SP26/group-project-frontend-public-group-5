@@ -106,11 +106,11 @@ export default async function BrowsePage() {
               <article
                 key={movie.id}
                 style={{
-                  borderRadius: 20,
+                  borderRadius: 16,
                   overflow: "hidden",
                   border: "1px solid #e2e8f0",
                   background: "#fff",
-                  boxShadow: "0 10px 30px rgba(15, 23, 42, 0.06)",
+                  boxShadow: "0 4px 16px rgba(15,23,42,0.07)",
                   display: "flex",
                   flexDirection: "column",
                   minHeight: 420,
@@ -178,12 +178,13 @@ export default async function BrowsePage() {
                       href={`/movie/${movie.id}`}
                       style={{
                         display: "inline-block",
-                        padding: "10px 16px",
+                        padding: "10px 20px",
                         borderRadius: 9999,
                         background: "#2563eb",
                         color: "#fff",
                         textDecoration: "none",
                         fontWeight: 600,
+                        fontSize: 14,
                       }}
                     >
                       View details

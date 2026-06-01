@@ -170,9 +170,10 @@ export default function ReviewsList({
             key={review.id}
             style={{
               border: "1px solid #e2e8f0",
-              borderRadius: 8,
+              borderRadius: 12,
               padding: "20px",
               background: "#fff",
+              boxShadow: "0 2px 8px rgba(15,23,42,0.05)",
             }}
           >
             {editingId === review.id ? (
@@ -240,10 +241,11 @@ export default function ReviewsList({
                     onClick={() => handleUpdate(review.id)}
                     disabled={updating}
                     style={{
-                      padding: "8px 16px",
-                      fontSize: 12,
+                      padding: "8px 18px",
+                      fontSize: 13,
+                      fontWeight: 600,
                       border: "none",
-                      borderRadius: 4,
+                      borderRadius: 8,
                       background: "#2563eb",
                       color: "#fff",
                       cursor: updating ? "not-allowed" : "pointer",
@@ -256,12 +258,13 @@ export default function ReviewsList({
                     onClick={cancelEdit}
                     disabled={updating}
                     style={{
-                      padding: "8px 16px",
-                      fontSize: 12,
+                      padding: "8px 14px",
+                      fontSize: 13,
+                      fontWeight: 600,
                       border: "1px solid #e2e8f0",
-                      borderRadius: 4,
+                      borderRadius: 8,
                       background: "#fff",
-                      color: "#64748b",
+                      color: "#475569",
                       cursor: updating ? "not-allowed" : "pointer",
                     }}
                   >
@@ -360,12 +363,13 @@ export default function ReviewsList({
                     <button
                       onClick={() => startEdit(review)}
                       style={{
-                        padding: "8px 12px",
-                        fontSize: 12,
+                        padding: "8px 14px",
+                        fontSize: 13,
+                        fontWeight: 600,
                         border: "1px solid #e2e8f0",
-                        borderRadius: 4,
+                        borderRadius: 8,
                         background: "#fff",
-                        color: "#2563eb",
+                        color: "#475569",
                         cursor: "pointer",
                       }}
                     >
@@ -375,10 +379,11 @@ export default function ReviewsList({
                       onClick={() => handleDelete(review.id)}
                       disabled={deletingId === review.id}
                       style={{
-                        padding: "8px 12px",
-                        fontSize: 12,
+                        padding: "8px 14px",
+                        fontSize: 13,
+                        fontWeight: 600,
                         border: "1px solid #e2e8f0",
-                        borderRadius: 4,
+                        borderRadius: 8,
                         background: "#fff",
                         color: "#dc2626",
                         cursor: deletingId === review.id ? "not-allowed" : "pointer",

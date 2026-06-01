@@ -149,7 +149,7 @@ export default function ProfilePage() {
   if (status === "loading") {
     return (
       <main
-        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px" }}
+        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px", fontFamily: "system-ui, sans-serif" }}
       >
         <div style={{ textAlign: "center", color: "#0f172a" }}>
           Loading profile...
@@ -161,7 +161,7 @@ export default function ProfilePage() {
   if (status === "unauthenticated") {
     return (
       <main
-        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px" }}
+        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px", fontFamily: "system-ui, sans-serif" }}
       >
         <div
           style={{
@@ -183,7 +183,7 @@ export default function ProfilePage() {
 
   return (
     <main
-      style={{ minHeight: "100vh", background: "#f8fafc", color: "#0f172a" }}
+      style={{ minHeight: "100vh", background: "#f8fafc", color: "#0f172a", fontFamily: "system-ui, sans-serif" }}
     >
       {/* Main content */}
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 16px" }}>
@@ -199,6 +199,21 @@ export default function ProfilePage() {
             <p style={{ margin: "8px 0 0 0", color: "#64748b", fontSize: 14 }}>
               Joined {new Date(userProfile.createdAt).toLocaleDateString()}
             </p>
+          </div>
+        )}
+
+        {error && (
+          <div
+            style={{
+              background: "#fee2e2",
+              color: "#991b1b",
+              padding: "12px 16px",
+              borderRadius: 8,
+              fontSize: 13,
+              marginBottom: 24,
+            }}
+          >
+            {error}
           </div>
         )}
 

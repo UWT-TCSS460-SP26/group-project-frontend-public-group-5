@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const btnBase: React.CSSProperties = {
   borderRadius: 9999,
-  padding: "12px 20px",
+  padding: "10px 20px",
   fontFamily: "system-ui, sans-serif",
   fontWeight: 600,
   fontSize: 14,
