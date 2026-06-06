@@ -1,6 +1,224 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+
+type MediaItem = {
+  id: number;
+  title?: string;
+  name?: string;
+  release_date?: string | null;
+  first_air_date?: string | null;
+  poster_path: string | null;
+  overview?: string;
+};
+
+function TrendingCarousel({
+  items,
+  label,
+  linkPrefix,
+}: {
+  items: MediaItem[];
+  label: string;
+  linkPrefix: string;
+}) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (items.length === 0) return;
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % items.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [items.length]);
+
+  if (items.length === 0) return null;
+
+  const item = items[index];
+  const title = item.title ?? item.name ?? "Untitled";
+  const date = item.release_date ?? item.first_air_date ?? null;
+
+  return (
+    <div style={{ marginBottom: 40 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#0f172a",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <span
+            style={{
+              display: "inline-block",
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              background: "#ef4444",
+              boxShadow: "0 0 0 3px rgba(239,68,68,0.2)",
+            }}
+          />
+          {label}
+        </h2>
+        <span style={{ fontSize: 13, color: "#94a3b8" }}>
+          {index + 1} / {items.length}
+        </span>
+      </div>
+
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 18,
+          border: "1px solid #e2e8f0",
+          boxShadow: "0 4px 20px rgba(15,23,42,0.08)",
+          overflow: "hidden",
+          display: "flex",
+          minHeight: 200,
+          transition: "opacity 0.4s",
+        }}
+      >
+        <Link
+          href={`/${linkPrefix}/${item.id}`}
+          style={{ flexShrink: 0, width: 140, background: "#f3f4f6", display: "block" }}
+        >
+          {item.poster_path ? (
+            <img
+              src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+              alt={`${title} poster`}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", cursor: "pointer" }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "grid",
+                placeItems: "center",
+                color: "#94a3b8",
+                fontSize: 12,
+                textAlign: "center",
+                padding: 8,
+              }}
+            >
+              No poster
+            </div>
+          )}
+        </Link>
+
+        <div
+          style={{
+            padding: "20px 24px",
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            {date && (
+              <p
+                style={{
+                  margin: "0 0 6px",
+                  fontSize: 12,
+                  color: "#2563eb",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                {new Date(date).getFullYear()}
+              </p>
+            )}
+            <h3
+              style={{
+                margin: "0 0 10px",
+                fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
+                fontWeight: 700,
+                color: "#0f172a",
+                lineHeight: 1.2,
+              }}
+            >
+              {title}
+            </h3>
+            {item.overview && (
+              <p
+                style={{
+                  margin: 0,
+                  color: "#475569",
+                  fontSize: 14,
+                  lineHeight: 1.65,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {item.overview}
+              </p>
+            )}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginTop: 16,
+              flexWrap: "wrap",
+              gap: 12,
+            }}
+          >
+            <Link
+              href={`/${linkPrefix}/${item.id}`}
+              style={{
+                display: "inline-block",
+                padding: "8px 18px",
+                borderRadius: 9999,
+                background: "#2563eb",
+                color: "#fff",
+                textDecoration: "none",
+                fontWeight: 600,
+                fontSize: 13,
+              }}
+            >
+              View details
+            </Link>
+
+            <div style={{ display: "flex", gap: 6 }}>
+              {items.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIndex(i)}
+                  aria-label={`Go to item ${i + 1}`}
+                  style={{
+                    width: i === index ? 20 : 8,
+                    height: 8,
+                    borderRadius: 9999,
+                    border: "none",
+                    background: i === index ? "#2563eb" : "#cbd5e1",
+                    cursor: "pointer",
+                    padding: 0,
+                    transition: "width 0.3s, background 0.3s",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
@@ -10,6 +228,25 @@ export default function SearchPage() {
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [trendingMovies, setTrendingMovies] = useState<MediaItem[]>([]);
+  const [trendingTV, setTrendingTV] = useState<MediaItem[]>([]);
+
+  useEffect(() => {
+    fetch("/api/movies/popular?language=en-US&page=1&sort_by=desc")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) =>
+        setTrendingMovies(Array.isArray(data) ? data.slice(0, 10) : [])
+      )
+      .catch(() => {});
+
+    fetch("/api/tv/popular?language=en-US&page=1&sort_by=desc")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) =>
+        setTrendingTV(Array.isArray(data) ? data.slice(0, 10) : [])
+      )
+      .catch(() => {});
+  }, []);
 
   const handleSearch = async () => {
     if (!searchText) return;
@@ -31,6 +268,8 @@ export default function SearchPage() {
       setIsLoading(false);
     }
   };
+
+  const showTrending = results.length === 0 && !isLoading && !error;
 
   return (
     <main
@@ -55,7 +294,7 @@ export default function SearchPage() {
               color: "#555",
             }}
           >
-            Search by title and filter by type to find what you're looking for.
+            Search by title and filter by type to find what you&apos;re looking for.
           </p>
         </div>
 
@@ -157,6 +396,22 @@ export default function SearchPage() {
           </div>
         )}
 
+        {/* Trending carousels — shown before any search */}
+        {showTrending && (
+          <>
+            <TrendingCarousel
+              items={trendingMovies}
+              label="Trending Movies"
+              linkPrefix="movie"
+            />
+            <TrendingCarousel
+              items={trendingTV}
+              label="Trending TV Shows"
+              linkPrefix="tv"
+            />
+          </>
+        )}
+
         {/* Results grid */}
         {results.length > 0 && (
           <div
@@ -180,12 +435,15 @@ export default function SearchPage() {
                   minHeight: 420,
                 }}
               >
-                <div style={{ minHeight: 190, background: "#f3f4f6" }}>
+                <Link
+                  href={`/${mediaType.toLowerCase()}/${item.id}`}
+                  style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}
+                >
                   {item.poster_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                       alt={`${item.title} poster`}
-                      style={{ width: "100%", height: 190, objectFit: "cover" }}
+                      style={{ width: "100%", height: 190, objectFit: "cover", display: "block", cursor: "pointer" }}
                     />
                   ) : (
                     <div
@@ -201,7 +459,7 @@ export default function SearchPage() {
                       No poster available
                     </div>
                   )}
-                </div>
+                </Link>
                 <div
                   style={{
                     padding: 18,

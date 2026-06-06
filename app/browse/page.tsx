@@ -116,12 +116,15 @@ export default async function BrowsePage() {
                   minHeight: 420,
                 }}
               >
-                <div style={{ minHeight: 190, background: "#f3f4f6" }}>
+                <a
+                  href={`/movie/${movie.id}`}
+                  style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}
+                >
                   {movie.poster_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={`${movie.title} poster`}
-                      style={{ width: "100%", height: 190, objectFit: "cover" }}
+                      style={{ width: "100%", height: 190, objectFit: "cover", display: "block", cursor: "pointer" }}
                     />
                   ) : (
                     <div
@@ -137,7 +140,7 @@ export default async function BrowsePage() {
                       No poster available
                     </div>
                   )}
-                </div>
+                </a>
                 <div
                   style={{
                     padding: 18,
