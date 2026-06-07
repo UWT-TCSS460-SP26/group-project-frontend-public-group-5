@@ -1,14 +1,14 @@
 "use client";
 
 import { useSession, signIn, signOut } from "next-auth/react";
-import Link from "next/link";
+import styles from "./Header.module.css";
 
 const btnBase: React.CSSProperties = {
-  borderRadius: 9999,
-  padding: "10px 20px",
+  borderRadius: "var(--radius-full)",
+  padding: "var(--sp-2) var(--sp-5)",
   fontFamily: "system-ui, sans-serif",
   fontWeight: 600,
-  fontSize: 14,
+  fontSize: "var(--fs-sm)",
   cursor: "pointer",
 };
 
@@ -22,8 +22,8 @@ export default function AuthButton() {
         style={{
           ...btnBase,
           border: "none",
-          background: "#0f172a",
-          color: "#fff",
+          background: "var(--btn-dark)",
+          color: "var(--btn-dark-text)",
         }}
       >
         Sign In
@@ -32,23 +32,16 @@ export default function AuthButton() {
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-      <span
-        style={{
-          fontSize: 14,
-          color: "#475569",
-          fontFamily: "system-ui, sans-serif",
-        }}
-      >
-        {session.user?.email}
-      </span>
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
+      {/* Hidden on mobile via CSS module */}
+      <span className={styles.email}>{session.user?.email}</span>
       <button
         onClick={() => signOut()}
         style={{
           ...btnBase,
-          border: "1px solid #e2e8f0",
-          background: "#fff",
-          color: "#0f172a",
+          border: "1px solid var(--border)",
+          background: "var(--surface)",
+          color: "var(--text)",
         }}
       >
         Sign Out

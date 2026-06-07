@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
 
@@ -23,20 +23,75 @@ function TrendingCarousel({
   linkPrefix: string;
 }) {
   const [index, setIndex] = useState(0);
+  const [fading, setFading] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const startAutoPlay = (itemCount: number) => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setIndex((i) => (i + 1) % itemCount);
+    }, 3000);
+  };
 
   useEffect(() => {
     if (items.length === 0) return;
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % items.length);
-    }, 3000);
-    return () => clearInterval(id);
+    startAutoPlay(items.length);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (resumeRef.current) clearTimeout(resumeRef.current);
+    };
   }, [items.length]);
+
+  const navigate = (newIndex: number) => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    if (resumeRef.current) clearTimeout(resumeRef.current);
+    resumeRef.current = setTimeout(() => startAutoPlay(items.length), 15000);
+
+    setFading(true);
+    setTimeout(() => {
+      setIndex(newIndex);
+      setFading(false);
+    }, 180);
+  };
 
   if (items.length === 0) return null;
 
   const item = items[index];
   const title = item.title ?? item.name ?? "Untitled";
   const date = item.release_date ?? item.first_air_date ?? null;
+
+  const arrowBtn = (disabled: boolean, onClick: () => void, ariaLabel: string, symbol: string) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      style={{
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 2,
+        width: 40,
+        height: 40,
+        borderRadius: "50%",
+        border: "1px solid var(--border)",
+        background: disabled ? "transparent" : "var(--surface)",
+        boxShadow: disabled ? "none" : "var(--shadow-sm)",
+        color: disabled ? "var(--text-faint)" : "var(--text)",
+        fontSize: 20,
+        lineHeight: 1,
+        cursor: disabled ? "default" : "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 0,
+        ...(symbol === "‹" ? { left: 0 } : { right: 0 }),
+      }}
+    >
+      {symbol}
+    </button>
+  );
 
   return (
     <div style={{ marginBottom: 40 }}>
@@ -53,7 +108,7 @@ function TrendingCarousel({
             margin: 0,
             fontSize: 20,
             fontWeight: 700,
-            color: "#0f172a",
+            color: "var(--text)",
             display: "flex",
             alignItems: "center",
             gap: 8,
@@ -65,155 +120,161 @@ function TrendingCarousel({
               width: 10,
               height: 10,
               borderRadius: "50%",
-              background: "#ef4444",
-              boxShadow: "0 0 0 3px rgba(239,68,68,0.2)",
+              background: "var(--danger)",
+              boxShadow: "var(--shadow-hero)",
             }}
           />
           {label}
         </h2>
-        <span style={{ fontSize: 13, color: "#94a3b8" }}>
+        <span style={{ fontSize: 13, color: "var(--text-faint)" }}>
           {index + 1} / {items.length}
         </span>
       </div>
 
-      <Link
-        href={`/${linkPrefix}/${item.id}`}
-        className={styles.card}
-        style={{
-          background: "#fff",
-          borderRadius: 18,
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 4px 20px rgba(15,23,42,0.08)",
-          overflow: "hidden",
-          display: "flex",
-          minHeight: 200,
-          transition: "opacity 0.4s, transform 0.2s ease, box-shadow 0.2s ease",
-        }}
-      >
-        <div style={{ flexShrink: 0, width: 140, background: "#f3f4f6", display: "block" }}>
-          {item.poster_path ? (
-            <img
-              src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-              alt={`${title} poster`}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-            />
-          ) : (
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                display: "grid",
-                placeItems: "center",
-                color: "#94a3b8",
-                fontSize: 12,
-                textAlign: "center",
-                padding: 8,
-              }}
-            >
-              No poster
-            </div>
-          )}
-        </div>
+      <div className={styles.carouselWrapper}>
+        {arrowBtn(index === 0, () => navigate(index - 1), "Previous", "‹")}
+        {arrowBtn(index === items.length - 1, () => navigate(index + 1), "Next", "›")}
 
-        <div
+        <Link
+          href={`/${linkPrefix}/${item.id}`}
+          className={styles.card}
           style={{
-            padding: "20px 24px",
-            flex: 1,
+            background: "var(--surface)",
+            borderRadius: "var(--radius-card)",
+            border: "1px solid var(--border)",
+            boxShadow: "var(--shadow-xl)",
+            overflow: "hidden",
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
+            minHeight: 200,
+            opacity: fading ? 0 : 1,
+            transition: "opacity 0.18s ease, transform 0.2s ease, box-shadow 0.2s ease",
           }}
         >
-          <div>
-            {date && (
-              <p
+          <div style={{ flexShrink: 0, width: 140, background: "var(--surface-2)", display: "block" }}>
+            {item.poster_path ? (
+              <img
+                src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                alt={`${title} poster`}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            ) : (
+              <div
                 style={{
-                  margin: "0 0 6px",
+                  width: "100%",
+                  height: "100%",
+                  display: "grid",
+                  placeItems: "center",
+                  color: "var(--text-faint)",
                   fontSize: 12,
-                  color: "#2563eb",
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
+                  textAlign: "center",
+                  padding: 8,
                 }}
               >
-                {new Date(date).getFullYear()}
-              </p>
-            )}
-            <h3
-              style={{
-                margin: "0 0 10px",
-                fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
-                fontWeight: 700,
-                color: "#0f172a",
-                lineHeight: 1.2,
-              }}
-            >
-              {title}
-            </h3>
-            {item.overview && (
-              <p
-                style={{
-                  margin: 0,
-                  color: "#475569",
-                  fontSize: 14,
-                  lineHeight: 1.65,
-                  display: "-webkit-box",
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {item.overview}
-              </p>
+                No poster
+              </div>
             )}
           </div>
 
           <div
             style={{
+              padding: "20px 24px",
+              flex: 1,
               display: "flex",
-              alignItems: "center",
+              flexDirection: "column",
               justifyContent: "space-between",
-              marginTop: 16,
-              flexWrap: "wrap",
-              gap: 12,
             }}
           >
-            <span
+            <div>
+              {date && (
+                <p
+                  style={{
+                    margin: "0 0 6px",
+                    fontSize: 12,
+                    color: "var(--accent)",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  {new Date(date).getFullYear()}
+                </p>
+              )}
+              <h3
+                style={{
+                  margin: "0 0 10px",
+                  fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)",
+                  fontWeight: 700,
+                  color: "var(--text)",
+                  lineHeight: 1.2,
+                }}
+              >
+                {title}
+              </h3>
+              {item.overview && (
+                <p
+                  style={{
+                    margin: 0,
+                    color: "var(--text-muted)",
+                    fontSize: 14,
+                    lineHeight: 1.65,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {item.overview}
+                </p>
+              )}
+            </div>
+
+            <div
               style={{
-                display: "inline-block",
-                padding: "8px 18px",
-                borderRadius: 9999,
-                background: "#2563eb",
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: 13,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginTop: 16,
+                flexWrap: "wrap",
+                gap: 12,
               }}
             >
-              View details
-            </span>
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "8px 18px",
+                  borderRadius: 9999,
+                  background: "var(--accent)",
+                  color: "var(--accent-text)",
+                  fontWeight: 600,
+                  fontSize: 13,
+                }}
+              >
+                View details
+              </span>
 
-            <div style={{ display: "flex", gap: 6 }}>
-              {items.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => { e.preventDefault(); setIndex(i); }}
-                  aria-label={`Go to item ${i + 1}`}
-                  style={{
-                    width: i === index ? 20 : 8,
-                    height: 8,
-                    borderRadius: 9999,
-                    border: "none",
-                    background: i === index ? "#2563eb" : "#cbd5e1",
-                    cursor: "pointer",
-                    padding: 0,
-                    transition: "width 0.3s, background 0.3s",
-                  }}
-                />
-              ))}
+              <div style={{ display: "flex", gap: 6 }}>
+                {items.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => { e.preventDefault(); setIndex(i); }}
+                    aria-label={`Go to item ${i + 1}`}
+                    style={{
+                      width: i === index ? 20 : 8,
+                      height: 8,
+                      borderRadius: 9999,
+                      border: "none",
+                      background: i === index ? "var(--accent)" : "var(--border)",
+                      cursor: "pointer",
+                      padding: 0,
+                      transition: "width 0.3s, background 0.3s",
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </Link>
+        </Link>
+      </div>{/* end card + arrows wrapper */}
     </div>
   );
 }
@@ -246,14 +307,19 @@ export default function SearchPage() {
       .catch(() => {});
   }, []);
 
-  const handleSearch = async () => {
-    if (!searchText) return;
+  // Extracted search logic — stable reference via useCallback
+  const performSearch = useCallback(async (text: string, type: "MOVIE" | "TV") => {
+    if (!text.trim()) {
+      setResults([]);
+      setError(null);
+      return;
+    }
     try {
       setIsLoading(true);
       const url =
-        mediaType === "MOVIE"
-          ? `/api/movies/search?title=${searchText.replace(/ /g, "+")}`
-          : `/api/tv/search?title=${searchText.replace(/ /g, "+")}`;
+        type === "MOVIE"
+          ? `/api/movies/search?title=${text.replace(/ /g, "+")}`
+          : `/api/tv/search?title=${text.replace(/ /g, "+")}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Server returned ${response.status}`);
       const data = await response.json();
@@ -265,23 +331,37 @@ export default function SearchPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const showTrending = results.length === 0 && !isLoading && !error;
+  // Live search — debounce 300 ms so the API is not called on every keystroke
+  useEffect(() => {
+    if (!searchText.trim()) {
+      setResults([]);
+      setError(null);
+      return;
+    }
+    const timer = setTimeout(() => performSearch(searchText, mediaType), 300);
+    return () => clearTimeout(timer);
+  }, [searchText, mediaType, performSearch]);
+
+  const handleSearch = () => performSearch(searchText, mediaType);
+
+  const showTrending = results.length === 0 && !isLoading && !error && !searchText.trim();
+  const showNoResults = !isLoading && !error && searchText.trim().length > 0 && results.length === 0;
 
   return (
     <main
       style={{
         padding: "0 0 24px",
         fontFamily: "system-ui, sans-serif",
-        background: "#f8fafc",
+        background: "var(--bg)",
         minHeight: "100vh",
       }}
     >
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
         {/* Header */}
         <div style={{ marginBottom: 32 }}>
-          <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+          <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--text)" }}>
             Find Movies & TV Shows
           </h1>
           <p
@@ -289,10 +369,10 @@ export default function SearchPage() {
               marginTop: 12,
               maxWidth: 680,
               lineHeight: 1.7,
-              color: "#555",
+              color: "var(--text-muted)",
             }}
           >
-            Search by title and filter by type to find what you&apos;re looking for.
+            Type to instantly filter results — or hit Search for a full lookup.
           </p>
         </div>
 
@@ -311,18 +391,17 @@ export default function SearchPage() {
             placeholder="Search for a title..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleSearch();
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
             style={{
               flex: "1 1 260px",
               padding: "12px 16px",
               fontSize: 15,
-              border: "1px solid #e2e8f0",
+              border: "1px solid var(--border)",
               borderRadius: 9999,
               outline: "none",
-              background: "#fff",
-              boxShadow: "0 1px 4px rgba(15,23,42,0.06)",
+              background: "var(--surface)",
+              color: "var(--text)",
+              boxShadow: "var(--shadow-sm)",
             }}
           />
           <button
@@ -331,9 +410,9 @@ export default function SearchPage() {
             style={{
               padding: "10px 20px",
               borderRadius: 9999,
-              border: mediaType === "MOVIE" ? "none" : "1px solid #e2e8f0",
-              background: mediaType === "MOVIE" ? "#2563eb" : "#fff",
-              color: mediaType === "MOVIE" ? "#fff" : "#0f172a",
+              border: mediaType === "MOVIE" ? "none" : "1px solid var(--border)",
+              background: mediaType === "MOVIE" ? "var(--accent)" : "var(--surface)",
+              color: mediaType === "MOVIE" ? "var(--accent-text)" : "var(--text)",
               fontWeight: 600,
               fontSize: 14,
               cursor: "pointer",
@@ -347,9 +426,9 @@ export default function SearchPage() {
             style={{
               padding: "10px 20px",
               borderRadius: 9999,
-              border: mediaType === "TV" ? "none" : "1px solid #e2e8f0",
-              background: mediaType === "TV" ? "#2563eb" : "#fff",
-              color: mediaType === "TV" ? "#fff" : "#0f172a",
+              border: mediaType === "TV" ? "none" : "1px solid var(--border)",
+              background: mediaType === "TV" ? "var(--accent)" : "var(--surface)",
+              color: mediaType === "TV" ? "var(--accent-text)" : "var(--text)",
               fontWeight: 600,
               fontSize: 14,
               cursor: "pointer",
@@ -363,8 +442,8 @@ export default function SearchPage() {
               padding: "10px 20px",
               borderRadius: 9999,
               border: "none",
-              background: "#0f172a",
-              color: "#fff",
+              background: "var(--accent)",
+              color: "var(--accent-text)",
               fontWeight: 600,
               fontSize: 14,
               cursor: "pointer",
@@ -376,7 +455,7 @@ export default function SearchPage() {
 
         {/* States */}
         {isLoading && (
-          <p role="status" style={{ color: "#475569" }}>
+          <p role="status" style={{ color: "var(--text-muted)" }}>
             Loading...
           </p>
         )}
@@ -384,13 +463,31 @@ export default function SearchPage() {
           <div
             style={{
               padding: 20,
-              background: "#ffe8e8",
-              color: "#842029",
+              background: "var(--error-bg-alt)",
+              color: "var(--error-text-alt)",
               borderRadius: 14,
-              border: "1px solid #f5c2c7",
+              border: "1px solid var(--error-border)",
             }}
           >
             {error}
+          </div>
+        )}
+
+        {/* No results empty state */}
+        {showNoResults && (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "48px 0",
+              color: "var(--text-subtle)",
+            }}
+          >
+            <p style={{ fontSize: 18, fontWeight: 600, margin: "0 0 8px", color: "var(--text-muted)" }}>
+              No results found for &ldquo;{searchText}&rdquo;
+            </p>
+            <p style={{ fontSize: 14, margin: 0 }}>
+              Try a different title or switch between Movies and TV Shows.
+            </p>
           </div>
         )}
 
@@ -427,15 +524,15 @@ export default function SearchPage() {
                 style={{
                   borderRadius: 16,
                   overflow: "hidden",
-                  border: "1px solid #e2e8f0",
-                  background: "#fff",
-                  boxShadow: "0 4px 16px rgba(15,23,42,0.07)",
+                  border: "1px solid var(--border)",
+                  background: "var(--surface)",
+                  boxShadow: "var(--shadow-card)",
                   display: "flex",
                   flexDirection: "column",
                   minHeight: 420,
                 }}
               >
-                <div style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}>
+                <div style={{ display: "block", minHeight: 190, background: "var(--surface-2)" }}>
                   {item.poster_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
@@ -449,8 +546,8 @@ export default function SearchPage() {
                         height: 190,
                         display: "grid",
                         placeItems: "center",
-                        color: "#667085",
-                        background: "#e2e8f0",
+                        color: "var(--text-faint)",
+                        background: "var(--border)",
                       }}
                     >
                       No poster available
@@ -468,7 +565,7 @@ export default function SearchPage() {
                   <p
                     style={{
                       margin: 0,
-                      color: "#2563eb",
+                      color: "var(--accent)",
                       fontSize: 12,
                       letterSpacing: "0.08em",
                       textTransform: "uppercase",
@@ -476,7 +573,7 @@ export default function SearchPage() {
                   >
                     {mediaType} • {item.release_date ?? "Unknown"}
                   </p>
-                  <h2 style={{ margin: "10px 0 0", fontSize: 20, flex: 1 }}>
+                  <h2 style={{ margin: "10px 0 0", fontSize: 20, flex: 1, color: "var(--text)" }}>
                     {item.title}
                   </h2>
                   <div style={{ marginTop: 18 }}>
@@ -485,8 +582,8 @@ export default function SearchPage() {
                         display: "inline-block",
                         padding: "10px 20px",
                         borderRadius: 9999,
-                        background: "#2563eb",
-                        color: "#fff",
+                        background: "var(--accent)",
+                        color: "var(--accent-text)",
                         fontWeight: 600,
                         fontSize: 14,
                       }}

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthButton from "./AuthButton";
+import ThemeToggle from "./ThemeToggle";
+import styles from "./Header.module.css";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -10,6 +12,7 @@ const navItems = [
   { href: "/featured", label: "Featured" },
   { href: "/search", label: "Search" },
   { href: "/profile", label: "Profile" },
+  { href: "/about", label: "About" },
 ];
 
 export default function Header() {
@@ -21,44 +24,28 @@ export default function Header() {
         position: "sticky",
         top: 0,
         zIndex: 30,
-        background: "#fff",
-        borderBottom: "1px solid #e2e8f0",
-        padding: "12px 16px",
+        background: "var(--surface)",
+        borderBottom: "1px solid var(--border)",
+        padding: "var(--sp-3) var(--sp-4)",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          maxWidth: 1200,
-          margin: "0 auto",
-          gap: 16,
-          flexWrap: "wrap",
-        }}
-      >
-        <nav style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      <div className={styles.wrapper}>
+        <nav className={styles.nav} aria-label="Main navigation">
           {navItems.map((item) => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                style={{
-                  textDecoration: "none",
-                  color: active ? "#0f172a" : "#475569",
-                  fontWeight: active ? 700 : 500,
-                  padding: "10px 14px",
-                  borderRadius: 9999,
-                  background: active ? "#eef2ff" : "transparent",
-                }}
+                className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}
               >
                 {item.label}
               </Link>
             );
           })}
         </nav>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div className={styles.right}>
+          <ThemeToggle />
           <AuthButton />
         </div>
       </div>

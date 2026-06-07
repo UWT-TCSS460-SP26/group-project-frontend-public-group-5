@@ -1,0 +1,188 @@
+/* ── Light (default) ─────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg:              #f8fafc;
+  --surface:         #ffffff;
+  --surface-2:       #f1f5f9;
+  --border:          #e2e8f0;
+
+  /* Text */
+  --text:            #0f172a;
+  --text-muted:      #475569;
+  --text-subtle:     #64748b;
+  --text-faint:      #94a3b8;
+
+  /* Brand */
+  --accent:          #2563eb;
+  --accent-text:     #ffffff;
+  --btn-dark:        #0f172a;
+  --btn-dark-text:   #ffffff;
+
+  /* Semantic */
+  --genre-bg:        #e0e7ff;
+  --genre-text:      #3730a3;
+  --danger:          #dc2626;
+  --star:            #f59e0b;
+  --star-empty:      #cbd5e1;
+  --success:         #16a34a;
+
+  /* Errors */
+  --error-bg:        #fee2e2;
+  --error-text:      #991b1b;
+  --error-bg-alt:    #ffe8e8;
+  --error-text-alt:  #842029;
+  --error-border:    #f5c2c7;
+
+  /* Info */
+  --info-bg:         #f0f9ff;
+  --info-text:       #0c4a6e;
+  --info-border:     #bae6fd;
+
+  /* Nav */
+  --nav-active:      #eef2ff;
+
+  /* Shadows */
+  --shadow-card:     0 4px 16px rgba(15,23,42,0.07);
+  --shadow-sm:       0 2px 8px rgba(15,23,42,0.05);
+  --shadow-lg:       0 10px 40px rgba(15,23,42,0.15);
+  --shadow-xl:       0 4px 20px rgba(15,23,42,0.08);
+  --shadow-hero:     0 0 0 3px rgba(239,68,68,0.2);
+
+  /* ── Typography scale ─────────────────────────────── */
+  /* Use these tokens instead of magic pixel values.     */
+  --fs-xs:    11px;   /* chips, badges, overlines       */
+  --fs-sm:    13px;   /* captions, secondary actions    */
+  --fs-base:  15px;   /* body text, inputs              */
+  --fs-md:    18px;   /* card titles                    */
+  --fs-lg:    22px;   /* section headings               */
+  --fs-xl:    32px;   /* page headings                  */
+  --lh-tight: 1.2;    /* headings                       */
+  --lh-body:  1.65;   /* body paragraphs                */
+
+  /* ── Spacing scale (8px base grid) ───────────────── */
+  --sp-1:   4px;
+  --sp-2:   8px;
+  --sp-3:   12px;
+  --sp-4:   16px;
+  --sp-5:   20px;
+  --sp-6:   24px;
+  --sp-8:   32px;
+  --sp-10:  40px;
+  --sp-12:  48px;
+
+  /* ── Border-radius scale ──────────────────────────── */
+  --radius-sm:   6px;      /* tags, badge chips          */
+  --radius-md:   8px;      /* buttons, inputs            */
+  --radius-card: 16px;     /* every card surface         */
+  --radius-full: 9999px;   /* pill buttons               */
+}
+
+/* ── Dark ──────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:              #0f172a;
+  --surface:         #1e293b;
+  --surface-2:       #334155;
+  --border:          #475569;
+
+  --text:            #f1f5f9;
+  --text-muted:      #cbd5e1;
+  --text-subtle:     #94a3b8;
+  --text-faint:      #64748b;
+
+  --accent:          #60a5fa;
+  --accent-text:     #0f172a;
+  --btn-dark:        #f1f5f9;
+  --btn-dark-text:   #0f172a;
+
+  --genre-bg:        #1e3a8a;
+  --genre-text:      #93c5fd;
+  --danger:          #f87171;
+  --star:            #f59e0b;
+  --star-empty:      #475569;
+  --success:         #4ade80;
+
+  --error-bg:        #3b0404;
+  --error-text:      #fca5a5;
+  --error-bg-alt:    #3b0404;
+  --error-text-alt:  #fca5a5;
+  --error-border:    #7f1d1d;
+
+  --info-bg:         #0c1a2e;
+  --info-text:       #7dd3fc;
+  --info-border:     #1e3a5f;
+
+  --nav-active:      #1e3a8a;
+
+  --shadow-card:     0 4px 16px rgba(0,0,0,0.35);
+  --shadow-sm:       0 2px 8px rgba(0,0,0,0.25);
+  --shadow-lg:       0 10px 40px rgba(0,0,0,0.4);
+  --shadow-xl:       0 4px 20px rgba(0,0,0,0.3);
+  --shadow-hero:     0 0 0 3px rgba(239,68,68,0.35);
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-family: system-ui, sans-serif;
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+}
+
+/* Smooth surface transitions on theme switch */
+a, button, input, textarea, select,
+header, main, section, article, nav, aside {
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+              color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Input / textarea dark-mode resets */
+input, textarea, select {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-subtle);
+}
+
+/* ── Shared state patterns ──────────────────────────────── */
+/* Apply .page-loading, .page-empty, or .page-error to give  */
+/* every route's status messages an identical visual base.    */
+
+.page-loading,
+.page-empty {
+  text-align: center;
+  padding: var(--sp-12) var(--sp-5);
+  color: var(--text-subtle);
+  font-size: var(--fs-base);
+}
+
+.page-loading p,
+.page-empty p {
+  margin: 0 0 var(--sp-2);
+}
+
+.page-empty-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin: 0 0 var(--sp-2);
+}
+
+.page-error {
+  padding: var(--sp-5);
+  background: var(--error-bg-alt);
+  color: var(--error-text-alt);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--error-border);
+  font-size: var(--fs-base);
+}

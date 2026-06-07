@@ -8,33 +8,20 @@ type RatingWidgetProps = {
   onRatingChange?: () => void;
 };
 
-export default function RatingWidget({
-  tmdbId,
-  mediaType,
-  onRatingChange,
-}: RatingWidgetProps) {
-  const [existingRating, setExistingRating] = useState<{
-    id: number;
-    score: number;
-  } | null>(null);
+export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: RatingWidgetProps) {
+  const [existingRating, setExistingRating] = useState<{ id: number; score: number } | null>(null);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const { data: session } = useSession();
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_BASE_URL ??
-    process.env.NEXT_PUBLIC_API_URL ??
-    "";
+  const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "";
 
   useEffect(() => {
     if (!session) return;
-
     async function checkExisting() {
       const res = await fetch(`${apiBase}/api/ratings/me`, {
-        headers: {
-          Authorization: `Bearer ${(session as any).accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${(session as any).accessToken}` },
       });
       if (!res.ok) return;
       const data = await res.json();
@@ -58,10 +45,7 @@ export default function RatingWidget({
       if (existingRating) {
         const res = await fetch(`${apiBase}/api/ratings/${existingRating.id}`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${(session as any).accessToken}`,
-          },
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${(session as any).accessToken}` },
           body: JSON.stringify({ score: selectedRating }),
         });
         if (!res.ok) throw new Error("Failed to update rating");
@@ -71,15 +55,8 @@ export default function RatingWidget({
       } else {
         const res = await fetch(`${apiBase}/api/ratings`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${(session as any).accessToken}`,
-          },
-          body: JSON.stringify({
-            tmdbId,
-            type: mediaType,
-            score: selectedRating,
-          }),
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${(session as any).accessToken}` },
+          body: JSON.stringify({ tmdbId, type: mediaType, score: selectedRating }),
         });
         if (!res.ok) throw new Error("Failed to submit rating");
         const data = await res.json();
@@ -102,9 +79,7 @@ export default function RatingWidget({
     try {
       const res = await fetch(`${apiBase}/api/ratings/${existingRating.id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${(session as any).accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${(session as any).accessToken}` },
       });
       if (!res.ok) throw new Error("Failed to delete rating");
       setExistingRating(null);
@@ -121,21 +96,14 @@ export default function RatingWidget({
   if (!session) {
     return (
       <p>
-        <a href="/api/auth/signin" style={{ color: "#2563eb" }}>Sign in</a> to rate
+        <a href="/api/auth/signin" style={{ color: "var(--accent)" }}>Sign in</a> to rate
       </p>
     );
   }
 
   return (
     <div style={{ marginTop: 24 }}>
-      <p
-        style={{
-          margin: "0 0 8px",
-          fontWeight: 600,
-          color: "#0f172a",
-          fontSize: 15,
-        }}
-      >
+      <p style={{ margin: "0 0 8px", fontWeight: 600, color: "var(--text)", fontSize: 15 }}>
         {existingRating ? "Your Rating" : "Rate This"}
       </p>
       <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
@@ -149,10 +117,7 @@ export default function RatingWidget({
               border: "none",
               cursor: "pointer",
               fontSize: 28,
-              color:
-                selectedRating !== null && star <= selectedRating
-                  ? "#f59e0b"
-                  : "#cbd5e1",
+              color: selectedRating !== null && star <= selectedRating ? "var(--star)" : "var(--star-empty)",
               padding: 0,
             }}
           >
@@ -167,8 +132,8 @@ export default function RatingWidget({
           style={{
             padding: "8px 18px",
             borderRadius: 8,
-            background: selectedRating === null ? "#e2e8f0" : "#2563eb",
-            color: selectedRating === null ? "#94a3b8" : "#fff",
+            background: selectedRating === null ? "var(--border)" : "var(--accent)",
+            color: selectedRating === null ? "var(--text-faint)" : "var(--accent-text)",
             border: "none",
             fontWeight: 600,
             cursor: selectedRating === null ? "not-allowed" : "pointer",
@@ -184,9 +149,9 @@ export default function RatingWidget({
             style={{
               padding: "8px 14px",
               borderRadius: 8,
-              background: "#fff",
-              color: "#dc2626",
-              border: "1px solid #e2e8f0",
+              background: "var(--surface)",
+              color: "var(--danger)",
+              border: "1px solid var(--border)",
               fontWeight: 600,
               cursor: loading ? "not-allowed" : "pointer",
               fontSize: 13,
@@ -197,13 +162,9 @@ export default function RatingWidget({
           </button>
         )}
       </div>
-      {success && (
-        <p style={{ marginTop: 8, color: "#16a34a", fontSize: 13 }}>
-          {success}
-        </p>
-      )}
+      {success && <p style={{ marginTop: 8, color: "var(--success)", fontSize: 13 }}>{success}</p>}
       {error && (
-        <div style={{ marginTop: 8, background: "#fee2e2", color: "#991b1b", padding: "12px 16px", borderRadius: 8, fontSize: 13 }}>
+        <div style={{ marginTop: 8, background: "var(--error-bg)", color: "var(--error-text)", padding: "12px 16px", borderRadius: 8, fontSize: 13 }}>
           {error}
         </div>
       )}

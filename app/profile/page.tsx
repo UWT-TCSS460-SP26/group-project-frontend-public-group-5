@@ -10,15 +10,8 @@ interface RatingEntry {
   id: number;
   score: number;
   createdAt: string;
-  user: {
-    userId: number;
-    username: string;
-  };
-  media: {
-    tmdbId: number;
-    type: string;
-    title: string | null;
-  };
+  user: { userId: number; username: string };
+  media: { tmdbId: number; type: string; title: string | null };
 }
 
 interface ReviewEntry {
@@ -26,15 +19,8 @@ interface ReviewEntry {
   title: string | null;
   body: string;
   createdAt: string;
-  user: {
-    userId: number;
-    username: string;
-  };
-  media: {
-    tmdbId: number;
-    type: string;
-    title: string | null;
-  };
+  user: { userId: number; username: string };
+  media: { tmdbId: number; type: string; title: string | null };
 }
 
 interface UserProfile {
@@ -55,42 +41,20 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"ratings" | "reviews">("ratings");
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      // Redirect not implemented yet - user will see message
-      return;
-    }
+    if (status === "unauthenticated") return;
 
     if (status === "authenticated" && session) {
       const fetchData = async () => {
         try {
           const accessToken = (session as any).accessToken;
-          if (!accessToken) {
-            throw new Error("No access token available");
-          }
+          if (!accessToken) throw new Error("No access token available");
 
-          // Fetch user profile
           const profileRes = await fetch(
             "https://group-project-backend-group-4.onrender.com/api/users/me",
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
+            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
 
           if (!profileRes.ok) {
-            const errorText = await profileRes.text();
-            const message = errorText
-              ? `Failed to fetch profile: ${profileRes.status} ${errorText}`
-              : `Failed to fetch profile: ${profileRes.status}`;
-            if (process.env.NODE_ENV !== "production") {
-              console.debug("Profile fetch failed:", {
-                status: profileRes.status,
-                statusText: profileRes.statusText,
-                error: errorText,
-                authHeaderSent: `Bearer ${accessToken.substring(0, 20)}...`,
-              });
-            }
             setError("Could not load profile");
             setLoading(false);
             return;
@@ -99,31 +63,19 @@ export default function ProfilePage() {
           const profileData = await profileRes.json();
           setUserProfile(profileData.user);
 
-          // Fetch enhanced ratings with TMDB metadata
           const ratingsRes = await fetch(
             "https://group-project-backend-group-4.onrender.com/api/ratings/me/enhanced",
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
+            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
-
           if (ratingsRes.ok) {
             const ratingsData = await ratingsRes.json();
             setRatings(ratingsData.ratings || []);
           }
 
-          // Fetch enhanced reviews with TMDB metadata
           const reviewsRes = await fetch(
             "https://group-project-backend-group-4.onrender.com/api/reviews/me/enhanced",
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
+            { headers: { Authorization: `Bearer ${accessToken}` } },
           );
-
           if (reviewsRes.ok) {
             const reviewsData = await reviewsRes.json();
             setReviews(reviewsData.reviews || []);
@@ -131,12 +83,7 @@ export default function ProfilePage() {
 
           setError(null);
         } catch (err) {
-          if (process.env.NODE_ENV !== "production") {
-            console.debug(err);
-          }
-          setError(
-            err instanceof Error ? err.message : "Failed to load profile",
-          );
+          setError(err instanceof Error ? err.message : "Failed to load profile");
         } finally {
           setLoading(false);
         }
@@ -148,55 +95,35 @@ export default function ProfilePage() {
 
   if (status === "loading") {
     return (
-      <main
-        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px", fontFamily: "system-ui, sans-serif" }}
-      >
-        <div style={{ textAlign: "center", color: "#0f172a" }}>
-          Loading profile...
-        </div>
+      <main style={{ minHeight: "100vh", background: "var(--bg)", padding: "20px", fontFamily: "system-ui, sans-serif" }}>
+        <div style={{ textAlign: "center", color: "var(--text)" }}>Loading profile...</div>
       </main>
     );
   }
 
   if (status === "unauthenticated") {
     return (
-      <main
-        style={{ minHeight: "100vh", background: "#f8fafc", padding: "20px", fontFamily: "system-ui, sans-serif" }}
-      >
-        <div
-          style={{
-            maxWidth: 600,
-            margin: "0 auto",
-            textAlign: "center",
-            color: "#0f172a",
-          }}
-        >
+      <main style={{ minHeight: "100vh", background: "var(--bg)", padding: "20px", fontFamily: "system-ui, sans-serif" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center", color: "var(--text)" }}>
           <h1>Sign In Required</h1>
           <p>Please sign in to view your profile.</p>
-          <Link href="/" style={{ color: "#2563eb", textDecoration: "none" }}>
-            Return to Home
-          </Link>
+          <Link href="/" style={{ color: "var(--accent)", textDecoration: "none" }}>Return to Home</Link>
         </div>
       </main>
     );
   }
 
   return (
-    <main
-      style={{ minHeight: "100vh", background: "#f8fafc", color: "#0f172a", fontFamily: "system-ui, sans-serif" }}
-    >
-      {/* Main content */}
+    <main style={{ minHeight: "100vh", background: "var(--bg)", color: "var(--text)", fontFamily: "system-ui, sans-serif" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 16px" }}>
         {/* Profile header */}
         {userProfile && (
           <div style={{ marginBottom: "40px" }}>
-            <h1 style={{ margin: "0 0 12px 0", fontSize: 32, fontWeight: 700 }}>
+            <h1 style={{ margin: "0 0 12px 0", fontSize: 32, fontWeight: 700, color: "var(--text)" }}>
               {userProfile.username}
             </h1>
-            <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>
-              {userProfile.email}
-            </p>
-            <p style={{ margin: "8px 0 0 0", color: "#64748b", fontSize: 14 }}>
+            <p style={{ margin: 0, color: "var(--text-subtle)", fontSize: 14 }}>{userProfile.email}</p>
+            <p style={{ margin: "8px 0 0 0", color: "var(--text-subtle)", fontSize: 14 }}>
               Joined {new Date(userProfile.createdAt).toLocaleDateString()}
             </p>
           </div>
@@ -205,8 +132,8 @@ export default function ProfilePage() {
         {error && (
           <div
             style={{
-              background: "#fee2e2",
-              color: "#991b1b",
+              background: "var(--error-bg)",
+              color: "var(--error-text)",
               padding: "12px 16px",
               borderRadius: 8,
               fontSize: 13,
@@ -218,9 +145,7 @@ export default function ProfilePage() {
         )}
 
         {/* Tabs */}
-        <div
-          style={{ marginBottom: "20px", borderBottom: "1px solid #e2e8f0" }}
-        >
+        <div style={{ marginBottom: "20px", borderBottom: "1px solid var(--border)" }}>
           <button
             onClick={() => setActiveTab("ratings")}
             style={{
@@ -229,9 +154,8 @@ export default function ProfilePage() {
               background: "transparent",
               cursor: "pointer",
               fontWeight: activeTab === "ratings" ? 600 : 400,
-              borderBottom:
-                activeTab === "ratings" ? "2px solid #2563eb" : "none",
-              color: activeTab === "ratings" ? "#2563eb" : "#64748b",
+              borderBottom: activeTab === "ratings" ? "2px solid var(--accent)" : "none",
+              color: activeTab === "ratings" ? "var(--accent)" : "var(--text-subtle)",
               fontSize: 14,
             }}
           >
@@ -245,9 +169,8 @@ export default function ProfilePage() {
               background: "transparent",
               cursor: "pointer",
               fontWeight: activeTab === "reviews" ? 600 : 400,
-              borderBottom:
-                activeTab === "reviews" ? "2px solid #2563eb" : "none",
-              color: activeTab === "reviews" ? "#2563eb" : "#64748b",
+              borderBottom: activeTab === "reviews" ? "2px solid var(--accent)" : "none",
+              color: activeTab === "reviews" ? "var(--accent)" : "var(--text-subtle)",
               fontSize: 14,
             }}
           >
@@ -257,9 +180,7 @@ export default function ProfilePage() {
 
         {/* Content */}
         {loading ? (
-          <div
-            style={{ textAlign: "center", padding: "40px", color: "#64748b" }}
-          >
+          <div style={{ textAlign: "center", padding: "40px", color: "var(--text-subtle)" }}>
             Loading your {activeTab}...
           </div>
         ) : activeTab === "ratings" ? (

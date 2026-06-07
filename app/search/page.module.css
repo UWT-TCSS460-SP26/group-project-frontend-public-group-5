@@ -7,5 +7,20 @@
 
 .card:hover {
   transform: scale(1.04);
-  box-shadow: 0 0 0 2px #2563eb, 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Carousel wrapper: side padding creates room for the arrow buttons.
+   Reduced at narrow viewports so the card stays readable. */
+.carouselWrapper {
+  position: relative;
+  padding-left: 52px;
+  padding-right: 52px;
+}
+
+@media (max-width: 500px) {
+  .carouselWrapper {
+    padding-left: 36px;
+    padding-right: 36px;
+  }
 }

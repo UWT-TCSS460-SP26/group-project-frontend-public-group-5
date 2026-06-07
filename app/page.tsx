@@ -45,7 +45,7 @@ export default function Home() {
     <main
       style={{
         minHeight: "100vh",
-        color: "#0f172a",
+        color: "var(--text)",
         display: "flex",
         flexDirection: "column",
         fontFamily: "system-ui, sans-serif",

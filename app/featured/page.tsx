@@ -1,4 +1,5 @@
 import Link from "next/link";
+import styles from "./page.module.css";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
@@ -27,52 +28,28 @@ type FeaturedTVShow = {
 async function getBestMovies(): Promise<FeaturedMovie[]> {
   const url = `${API_BASE}/api/movies/featured?sort=top-rated`;
   const res = await fetch(url, { cache: "no-store" });
-
-  if (!res.ok) {
-    throw new Error(
-      `Failed to load best movies from ${url}: ${res.status} ${res.statusText}`
-    );
-  }
-
+  if (!res.ok) throw new Error(`Failed to load best movies from ${url}: ${res.status} ${res.statusText}`);
   return res.json();
 }
 
 async function getMostReviewedMovies(): Promise<FeaturedMovie[]> {
   const url = `${API_BASE}/api/movies/featured?sort=most-reviewed`;
   const res = await fetch(url, { cache: "no-store" });
-
-  if (!res.ok) {
-    throw new Error(
-      `Failed to load most-reviewed movies from ${url}: ${res.status} ${res.statusText}`
-    );
-  }
-
+  if (!res.ok) throw new Error(`Failed to load most-reviewed movies from ${url}: ${res.status} ${res.statusText}`);
   return res.json();
 }
 
 async function getBestTVShows(): Promise<FeaturedTVShow[]> {
   const url = `${API_BASE}/api/tv/featured?sort=top-rated`;
   const res = await fetch(url, { cache: "no-store" });
-
-  if (!res.ok) {
-    throw new Error(
-      `Failed to load best TV shows from ${url}: ${res.status} ${res.statusText}`
-    );
-  }
-
+  if (!res.ok) throw new Error(`Failed to load best TV shows from ${url}: ${res.status} ${res.statusText}`);
   return res.json();
 }
 
 async function getMostReviewedTVShows(): Promise<FeaturedTVShow[]> {
   const url = `${API_BASE}/api/tv/featured?sort=most-reviewed`;
   const res = await fetch(url, { cache: "no-store" });
-
-  if (!res.ok) {
-    throw new Error(
-      `Failed to load most-reviewed TV shows from ${url}: ${res.status} ${res.statusText}`
-    );
-  }
-
+  if (!res.ok) throw new Error(`Failed to load most-reviewed TV shows from ${url}: ${res.status} ${res.statusText}`);
   return res.json();
 }
 
@@ -104,28 +81,26 @@ export default async function FeaturedPage() {
     bestTVShows = bts;
     mostReviewedTVShows = mrts;
   } catch (error) {
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else {
-      errorMessage = "An unexpected error occurred while loading featured content.";
-    }
+    errorMessage = error instanceof Error
+      ? error.message
+      : "An unexpected error occurred while loading featured content.";
   }
 
   const renderMovieCard = (movie: FeaturedMovie) => (
-    <article
+    <Link
       key={movie.id}
+      href={`/movie/${movie.id}`}
+      className={styles.card}
       style={{
         borderRadius: 16,
         overflow: "hidden",
-        border: "1px solid #e2e8f0",
-        background: "#fff",
-        boxShadow: "0 4px 16px rgba(15,23,42,0.07)",
-        display: "flex",
-        flexDirection: "column",
+        border: "1px solid var(--border)",
+        background: "var(--surface)",
+        boxShadow: "var(--shadow-card)",
         minHeight: 420,
       }}
     >
-      <div style={{ minHeight: 190, background: "#f3f4f6" }}>
+      <div style={{ minHeight: 190, background: "var(--surface-2)" }}>
         {movie.poster_path ? (
           <img
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -139,27 +114,20 @@ export default async function FeaturedPage() {
               height: 190,
               display: "grid",
               placeItems: "center",
-              color: "#667085",
-              background: "#e2e8f0",
+              color: "var(--text-faint)",
+              background: "var(--border)",
             }}
           >
             No poster available
           </div>
         )}
       </div>
-      <div
-        style={{
-          padding: 18,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <div style={{ padding: 18, flex: 1, display: "flex", flexDirection: "column" }}>
         <div>
           <p
             style={{
               margin: 0,
-              color: "#2563eb",
+              color: "var(--accent)",
               fontSize: 12,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
@@ -168,56 +136,47 @@ export default async function FeaturedPage() {
             {movie.original_language.toUpperCase()} •{" "}
             {formatReleaseDate(movie.release_date)}
           </p>
-          <h2 style={{ margin: "10px 0 0", fontSize: 20 }}>
+          <h2 style={{ margin: "10px 0 0", fontSize: 20, color: "var(--text)" }}>
             {movie.title}
           </h2>
         </div>
-        <p
-          style={{
-            marginTop: 12,
-            color: "#475569",
-            lineHeight: 1.65,
-            flex: 1,
-          }}
-        >
+        <p style={{ marginTop: 12, color: "var(--text-muted)", lineHeight: 1.65, flex: 1 }}>
           {movie.overview || "No description available."}
         </p>
         <div style={{ marginTop: 18 }}>
-          <a
-            href={`/movie/${movie.id}`}
+          <span
             style={{
               display: "inline-block",
               padding: "10px 20px",
               borderRadius: 9999,
-              background: "#2563eb",
-              color: "#fff",
-              textDecoration: "none",
+              background: "var(--accent)",
+              color: "var(--accent-text)",
               fontWeight: 600,
               fontSize: 14,
             }}
           >
             View details
-          </a>
+          </span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 
   const renderTVCard = (show: FeaturedTVShow) => (
-    <article
+    <Link
       key={show.id}
+      href={`/tv/${show.id}`}
+      className={styles.card}
       style={{
         borderRadius: 16,
         overflow: "hidden",
-        border: "1px solid #e2e8f0",
-        background: "#fff",
-        boxShadow: "0 4px 16px rgba(15,23,42,0.07)",
-        display: "flex",
-        flexDirection: "column",
+        border: "1px solid var(--border)",
+        background: "var(--surface)",
+        boxShadow: "var(--shadow-card)",
         minHeight: 420,
       }}
     >
-      <div style={{ minHeight: 190, background: "#f3f4f6" }}>
+      <div style={{ minHeight: 190, background: "var(--surface-2)" }}>
         {show.poster_path ? (
           <img
             src={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
@@ -231,27 +190,20 @@ export default async function FeaturedPage() {
               height: 190,
               display: "grid",
               placeItems: "center",
-              color: "#667085",
-              background: "#e2e8f0",
+              color: "var(--text-faint)",
+              background: "var(--border)",
             }}
           >
             No poster available
           </div>
         )}
       </div>
-      <div
-        style={{
-          padding: 18,
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <div style={{ padding: 18, flex: 1, display: "flex", flexDirection: "column" }}>
         <div>
           <p
             style={{
               margin: 0,
-              color: "#2563eb",
+              color: "var(--accent)",
               fontSize: 12,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
@@ -260,55 +212,39 @@ export default async function FeaturedPage() {
             {show.original_language.toUpperCase()} •{" "}
             {formatReleaseDate(show.first_air_date)}
           </p>
-          <h2 style={{ margin: "10px 0 0", fontSize: 20 }}>
+          <h2 style={{ margin: "10px 0 0", fontSize: 20, color: "var(--text)" }}>
             {show.name}
           </h2>
         </div>
-        <p
-          style={{
-            marginTop: 12,
-            color: "#475569",
-            lineHeight: 1.65,
-            flex: 1,
-          }}
-        >
+        <p style={{ marginTop: 12, color: "var(--text-muted)", lineHeight: 1.65, flex: 1 }}>
           {show.overview || "No description available."}
         </p>
         <div style={{ marginTop: 18 }}>
-          <a
-            href={`/tv/${show.id}`}
+          <span
             style={{
               display: "inline-block",
               padding: "10px 20px",
               borderRadius: 9999,
-              background: "#2563eb",
-              color: "#fff",
-              textDecoration: "none",
+              background: "var(--accent)",
+              color: "var(--accent-text)",
               fontWeight: 600,
               fontSize: 14,
             }}
           >
             View details
-          </a>
+          </span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 
   const renderSection = (title: string, subtitle: string, items: any[], isTV: boolean) => (
-    <section style={{ marginTop: 48, paddingTop: 32, borderTop: "1px solid #e2e8f0" }}>
+    <section style={{ marginTop: 48, paddingTop: 32, borderTop: "1px solid var(--border)" }}>
       <div style={{ marginBottom: 32 }}>
-        <h2 style={{ margin: "0 0 12px", fontSize: "clamp(1.5rem, 3vw, 2.5rem)" }}>
+        <h2 style={{ margin: "0 0 12px", fontSize: "clamp(1.5rem, 3vw, 2.5rem)", color: "var(--text)" }}>
           {title}
         </h2>
-        <p
-          style={{
-            margin: 0,
-            maxWidth: 680,
-            lineHeight: 1.7,
-            color: "#555",
-          }}
-        >
+        <p style={{ margin: 0, maxWidth: 680, lineHeight: 1.7, color: "var(--text-muted)" }}>
           {subtitle}
         </p>
       </div>
@@ -317,10 +253,10 @@ export default async function FeaturedPage() {
         <div
           style={{
             padding: 20,
-            background: "#f0f9ff",
-            color: "#0c4a6e",
+            background: "var(--info-bg)",
+            color: "var(--info-text)",
             borderRadius: 14,
-            border: "1px solid #bae6fd",
+            border: "1px solid var(--info-border)",
           }}
         >
           No items available at this time.
@@ -344,23 +280,16 @@ export default async function FeaturedPage() {
       style={{
         padding: "0 0 24px",
         fontFamily: "system-ui, sans-serif",
-        background: "#f8fafc",
+        background: "var(--bg)",
         minHeight: "100vh",
       }}
     >
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
         <div style={{ marginBottom: 24 }}>
-          <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+          <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--text)" }}>
             Featured Content
           </h1>
-          <p
-            style={{
-              marginTop: 12,
-              maxWidth: 680,
-              lineHeight: 1.7,
-              color: "#555",
-            }}
-          >
+          <p style={{ marginTop: 12, maxWidth: 680, lineHeight: 1.7, color: "var(--text-muted)" }}>
             Discover the best and most discussed movies and TV shows from our community.
           </p>
         </div>
@@ -369,49 +298,25 @@ export default async function FeaturedPage() {
           <div
             style={{
               padding: 20,
-              background: "#ffe8e8",
-              color: "#842029",
+              background: "var(--error-bg-alt)",
+              color: "var(--error-text-alt)",
               borderRadius: 14,
-              border: "1px solid #f5c2c7",
+              border: "1px solid var(--error-border)",
             }}
           >
             <strong>Unable to load featured content.</strong>
             <p style={{ margin: "8px 0 0" }}>{errorMessage}</p>
-            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#5c5c5c" }}>
+            <p style={{ margin: "8px 0 0", fontSize: 14, color: "var(--text-subtle)" }}>
               Confirm that the partner API base URL is set in{" "}
-              <code>NEXT_PUBLIC_API_BASE_URL</code> or that the default local
-              URL is accessible.
+              <code>NEXT_PUBLIC_API_BASE_URL</code> or that the default local URL is accessible.
             </p>
           </div>
         ) : (
           <>
-            {renderSection(
-              "⭐ Top Rated Movies",
-              "The highest rated movies based on community reviews.",
-              bestMovies,
-              false
-            )}
-
-            {renderSection(
-              "💬 Most Reviewed Movies",
-              "Movies generating the most community discussion and engagement.",
-              mostReviewedMovies,
-              false
-            )}
-
-            {renderSection(
-              "⭐ Top Rated TV Shows",
-              "The highest rated TV shows based on community reviews.",
-              bestTVShows,
-              true
-            )}
-
-            {renderSection(
-              "💬 Most Reviewed TV Shows",
-              "TV shows generating the most community discussion and engagement.",
-              mostReviewedTVShows,
-              true
-            )}
+            {renderSection("⭐ Top Rated Movies", "The highest rated movies based on community reviews.", bestMovies, false)}
+            {renderSection("💬 Most Reviewed Movies", "Movies generating the most community discussion and engagement.", mostReviewedMovies, false)}
+            {renderSection("⭐ Top Rated TV Shows", "The highest rated TV shows based on community reviews.", bestTVShows, true)}
+            {renderSection("💬 Most Reviewed TV Shows", "TV shows generating the most community discussion and engagement.", mostReviewedTVShows, true)}
           </>
         )}
       </section>

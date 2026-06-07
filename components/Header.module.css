@@ -1,0 +1,67 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: var(--sp-3);
+}
+
+/* Nav scrolls horizontally on narrow screens instead of wrapping */
+.nav {
+  display: flex;
+  gap: var(--sp-1);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
+  padding-bottom: 2px;          /* prevent cut-off on some browsers */
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
+}
+
+.navLink {
+  text-decoration: none;
+  font-weight: 500;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  color: var(--text-muted);
+  background: transparent;
+  font-size: var(--fs-base);
+}
+
+.navLink:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.navLinkActive {
+  color: var(--text);
+  font-weight: 700;
+  background: var(--nav-active);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+
+/* Hide the user email at narrow viewports */
+.email {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  font-family: system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .email {
+    display: none;
+  }
+}

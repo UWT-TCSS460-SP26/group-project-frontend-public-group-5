@@ -8,15 +8,8 @@ interface RatingEntry {
   id: number;
   score: number;
   createdAt: string;
-  user: {
-    userId: number;
-    username: string;
-  };
-  media: {
-    tmdbId: number;
-    type: string;
-    title: string | null;
-  };
+  user: { userId: number; username: string };
+  media: { tmdbId: number; type: string; title: string | null };
 }
 
 interface RatingsListProps {
@@ -24,10 +17,7 @@ interface RatingsListProps {
   onRatingsChange: (ratings: RatingEntry[]) => void;
 }
 
-export default function RatingsList({
-  ratings,
-  onRatingsChange,
-}: RatingsListProps) {
+export default function RatingsList({ ratings, onRatingsChange }: RatingsListProps) {
   const { data: session } = useSession();
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editScore, setEditScore] = useState<number>(0);
@@ -41,34 +31,23 @@ export default function RatingsList({
     setError(null);
   };
 
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditScore(0);
-  };
+  const cancelEdit = () => { setEditingId(null); setEditScore(0); };
 
   const handleUpdate = async (ratingId: number) => {
     try {
       setUpdating(true);
       const accessToken = (session as any)?.accessToken;
       if (!accessToken) throw new Error("No access token available");
-
       const response = await fetch(
         `https://group-project-backend-group-4.onrender.com/api/ratings/${ratingId}`,
         {
           method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
+          headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
           body: JSON.stringify({ score: editScore }),
         },
       );
-
       if (!response.ok) throw new Error("Failed to update rating");
-
-      onRatingsChange(
-        ratings.map((r) => (r.id === ratingId ? { ...r, score: editScore } : r)),
-      );
+      onRatingsChange(ratings.map((r) => (r.id === ratingId ? { ...r, score: editScore } : r)));
       setEditingId(null);
       setError(null);
     } catch (err) {
@@ -79,33 +58,16 @@ export default function RatingsList({
   };
 
   const handleDelete = async (ratingId: number) => {
-    if (!window.confirm("Are you sure you want to delete this rating?")) {
-      return;
-    }
-
+    if (!window.confirm("Are you sure you want to delete this rating?")) return;
     try {
       setDeletingId(ratingId);
       const accessToken = (session as any)?.accessToken;
-
-      if (!accessToken) {
-        throw new Error("No access token available");
-      }
-
+      if (!accessToken) throw new Error("No access token available");
       const response = await fetch(
         `https://group-project-backend-group-4.onrender.com/api/ratings/${ratingId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+        { method: "DELETE", headers: { Authorization: `Bearer ${accessToken}` } },
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete rating");
-      }
-
-      // Remove from local state
+      if (!response.ok) throw new Error("Failed to delete rating");
       onRatingsChange(ratings.filter((r) => r.id !== ratingId));
       setError(null);
     } catch (err) {
@@ -117,18 +79,9 @@ export default function RatingsList({
 
   if (ratings.length === 0) {
     return (
-      <div
-        style={{
-          textAlign: "center",
-          padding: "40px 20px",
-          color: "#64748b",
-        }}
-      >
-        <p>You haven't rated anything yet.</p>
-        <Link
-          href="/browse"
-          style={{ color: "#2563eb", textDecoration: "none" }}
-        >
+      <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--text-subtle)" }}>
+        <p>You haven&apos;t rated anything yet.</p>
+        <Link href="/browse" style={{ color: "var(--accent)", textDecoration: "none" }}>
           Start rating movies and TV shows
         </Link>
       </div>
@@ -138,15 +91,7 @@ export default function RatingsList({
   return (
     <div>
       {error && (
-        <div
-          style={{
-            background: "#fee2e2",
-            color: "#991b1b",
-            padding: "16px",
-            borderRadius: 8,
-            marginBottom: "20px",
-          }}
-        >
+        <div style={{ background: "var(--error-bg)", color: "var(--error-text)", padding: "16px", borderRadius: 8, marginBottom: "20px" }}>
           Error: {error}
         </div>
       )}
@@ -156,24 +101,24 @@ export default function RatingsList({
           <div
             key={rating.id}
             style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: 12,
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius-card)",
               padding: "20px",
-              background: "#fff",
-              boxShadow: "0 2px 8px rgba(15,23,42,0.05)",
+              background: "var(--surface)",
+              boxShadow: "var(--shadow-sm)",
             }}
           >
-            {/* Title + type badge always visible */}
+            {/* Title + type badge — always visible */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: 12 }}>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "#0f172a" }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
                 {rating.media.title || "Unknown Title"}
               </h3>
               <span
                 style={{
                   display: "inline-block",
                   fontSize: 12,
-                  color: "#64748b",
-                  background: "#f1f5f9",
+                  color: "var(--text-subtle)",
+                  background: "var(--surface-2)",
                   padding: "4px 8px",
                   borderRadius: 4,
                 }}
@@ -183,7 +128,6 @@ export default function RatingsList({
             </div>
 
             {editingId === rating.id ? (
-              // Edit mode
               <div>
                 <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -196,7 +140,7 @@ export default function RatingsList({
                         border: "none",
                         cursor: "pointer",
                         fontSize: 28,
-                        color: star <= editScore ? "#f59e0b" : "#cbd5e1",
+                        color: star <= editScore ? "var(--star)" : "var(--star-empty)",
                         padding: 0,
                       }}
                     >
@@ -214,8 +158,8 @@ export default function RatingsList({
                       fontWeight: 600,
                       border: "none",
                       borderRadius: 8,
-                      background: editScore === 0 ? "#e2e8f0" : "#2563eb",
-                      color: editScore === 0 ? "#94a3b8" : "#fff",
+                      background: editScore === 0 ? "var(--border)" : "var(--accent)",
+                      color: editScore === 0 ? "var(--text-faint)" : "var(--accent-text)",
                       cursor: updating || editScore === 0 ? "not-allowed" : "pointer",
                       opacity: updating ? 0.6 : 1,
                     }}
@@ -229,10 +173,10 @@ export default function RatingsList({
                       padding: "8px 14px",
                       fontSize: 13,
                       fontWeight: 600,
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid var(--border)",
                       borderRadius: 8,
-                      background: "#fff",
-                      color: "#475569",
+                      background: "var(--surface)",
+                      color: "var(--text-muted)",
                       cursor: updating ? "not-allowed" : "pointer",
                     }}
                   >
@@ -241,56 +185,30 @@ export default function RatingsList({
                 </div>
               </div>
             ) : (
-              // View mode
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "start",
-                  gap: "16px",
-                }}
-              >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "16px" }}>
                 <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "16px",
-                    }}
-                  >
-                    <div style={{ fontSize: 14, color: "#64748b" }}>
-                      {new Date(rating.createdAt).toLocaleDateString()}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 700,
-                        color: "#2563eb",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
+                  {/* Star rating */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: 12 }}>
+                    <span style={{ fontSize: 18, color: "var(--star)" }}>
                       {"★".repeat(Math.min(Math.max(rating.score, 0), 5))}
                       {"☆".repeat(5 - Math.min(Math.max(rating.score, 0), 5))}
-                      <span style={{ fontSize: 14, color: "#64748b", marginLeft: "8px" }}>
-                        ({rating.score}/5)
-                      </span>
-                    </div>
+                    </span>
+                    <span style={{ fontSize: 12, color: "var(--text-subtle)", marginLeft: 6 }}>
+                      ({rating.score}/5)
+                    </span>
                   </div>
-
-                  <Link
-                    href={`/${rating.media.type === "MOVIE" ? "movie" : "tv"}/${rating.media.tmdbId}`}
-                    style={{
-                      display: "inline-block",
-                      marginTop: "12px",
-                      fontSize: 12,
-                      color: "#2563eb",
-                      textDecoration: "none",
-                    }}
-                  >
-                    View {rating.media.type === "MOVIE" ? "film" : "show"} →
-                  </Link>
+                  {/* Footer: date + view link */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <span style={{ fontSize: 12, color: "var(--text-subtle)" }}>
+                      {new Date(rating.createdAt).toLocaleDateString()}
+                    </span>
+                    <Link
+                      href={`/${rating.media.type === "MOVIE" ? "movie" : "tv"}/${rating.media.tmdbId}`}
+                      style={{ fontSize: 12, color: "var(--accent)", textDecoration: "none" }}
+                    >
+                      View {rating.media.type === "MOVIE" ? "film" : "show"} →
+                    </Link>
+                  </div>
                 </div>
 
                 <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
@@ -300,10 +218,10 @@ export default function RatingsList({
                       padding: "8px 14px",
                       fontSize: 13,
                       fontWeight: 600,
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid var(--border)",
                       borderRadius: 8,
-                      background: "#fff",
-                      color: "#475569",
+                      background: "var(--surface)",
+                      color: "var(--text-muted)",
                       cursor: "pointer",
                     }}
                   >
@@ -316,10 +234,10 @@ export default function RatingsList({
                       padding: "8px 14px",
                       fontSize: 13,
                       fontWeight: 600,
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid var(--border)",
                       borderRadius: 8,
-                      background: "#fff",
-                      color: "#dc2626",
+                      background: "var(--surface)",
+                      color: "var(--danger)",
                       cursor: deletingId === rating.id ? "not-allowed" : "pointer",
                       opacity: deletingId === rating.id ? 0.6 : 1,
                     }}

@@ -56,13 +56,13 @@ export default async function BrowsePage() {
       style={{
         padding: "0 0 24px",
         fontFamily: "system-ui, sans-serif",
-        background: "#f8fafc",
+        background: "var(--bg)",
         minHeight: "100vh",
       }}
     >
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px" }}>
         <div style={{ marginBottom: 24 }}>
-          <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)" }}>
+          <h1 style={{ margin: "8px 0 0", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--text)" }}>
             Popular Movies
           </h1>
           <p
@@ -70,7 +70,7 @@ export default async function BrowsePage() {
               marginTop: 12,
               maxWidth: 680,
               lineHeight: 1.7,
-              color: "#555",
+              color: "var(--text-muted)",
             }}
           >
             See what people are watching right now.
@@ -81,15 +81,15 @@ export default async function BrowsePage() {
           <div
             style={{
               padding: 20,
-              background: "#ffe8e8",
-              color: "#842029",
+              background: "var(--error-bg-alt)",
+              color: "var(--error-text-alt)",
               borderRadius: 14,
-              border: "1px solid #f5c2c7",
+              border: "1px solid var(--error-border)",
             }}
           >
             <strong>Unable to load browse content.</strong>
             <p style={{ margin: "8px 0 0" }}>{errorMessage}</p>
-            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#5c5c5c" }}>
+            <p style={{ margin: "8px 0 0", fontSize: 14, color: "var(--text-subtle)" }}>
               Confirm that the partner API base URL is set in{" "}
               <code>NEXT_PUBLIC_API_BASE_URL</code> or that the default local
               URL is accessible.
@@ -111,15 +111,15 @@ export default async function BrowsePage() {
                 style={{
                   borderRadius: 16,
                   overflow: "hidden",
-                  border: "1px solid #e2e8f0",
-                  background: "#fff",
-                  boxShadow: "0 4px 16px rgba(15,23,42,0.07)",
+                  border: "1px solid var(--border)",
+                  background: "var(--surface)",
+                  boxShadow: "var(--shadow-card)",
                   display: "flex",
                   flexDirection: "column",
                   minHeight: 420,
                 }}
               >
-                <div style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}>
+                <div style={{ display: "block", minHeight: 190, background: "var(--surface-2)" }}>
                   {movie.poster_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -133,8 +133,8 @@ export default async function BrowsePage() {
                         height: 190,
                         display: "grid",
                         placeItems: "center",
-                        color: "#667085",
-                        background: "#e2e8f0",
+                        color: "var(--text-faint)",
+                        background: "var(--border)",
                       }}
                     >
                       No poster available
@@ -153,7 +153,7 @@ export default async function BrowsePage() {
                     <p
                       style={{
                         margin: 0,
-                        color: "#2563eb",
+                        color: "var(--accent)",
                         fontSize: 12,
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
@@ -162,14 +162,14 @@ export default async function BrowsePage() {
                       {movie.original_language.toUpperCase()} •{" "}
                       {formatReleaseDate(movie.release_date)}
                     </p>
-                    <h2 style={{ margin: "10px 0 0", fontSize: 20 }}>
+                    <h2 style={{ margin: "10px 0 0", fontSize: 20, color: "var(--text)" }}>
                       {movie.title}
                     </h2>
                   </div>
                   <p
                     style={{
                       marginTop: 12,
-                      color: "#475569",
+                      color: "var(--text-muted)",
                       lineHeight: 1.65,
                       flex: 1,
                     }}
@@ -182,8 +182,8 @@ export default async function BrowsePage() {
                         display: "inline-block",
                         padding: "10px 20px",
                         borderRadius: 9999,
-                        background: "#2563eb",
-                        color: "#fff",
+                        background: "var(--accent)",
+                        color: "var(--accent-text)",
                         fontWeight: 600,
                         fontSize: 14,
                       }}
