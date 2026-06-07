@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import styles from "./page.module.css";
 
 type MediaItem = {
   id: number;
@@ -75,7 +76,9 @@ function TrendingCarousel({
         </span>
       </div>
 
-      <div
+      <Link
+        href={`/${linkPrefix}/${item.id}`}
+        className={styles.card}
         style={{
           background: "#fff",
           borderRadius: 18,
@@ -84,18 +87,15 @@ function TrendingCarousel({
           overflow: "hidden",
           display: "flex",
           minHeight: 200,
-          transition: "opacity 0.4s",
+          transition: "opacity 0.4s, transform 0.2s ease, box-shadow 0.2s ease",
         }}
       >
-        <Link
-          href={`/${linkPrefix}/${item.id}`}
-          style={{ flexShrink: 0, width: 140, background: "#f3f4f6", display: "block" }}
-        >
+        <div style={{ flexShrink: 0, width: 140, background: "#f3f4f6", display: "block" }}>
           {item.poster_path ? (
             <img
               src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
               alt={`${title} poster`}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", cursor: "pointer" }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           ) : (
             <div
@@ -113,7 +113,7 @@ function TrendingCarousel({
               No poster
             </div>
           )}
-        </Link>
+        </div>
 
         <div
           style={{
@@ -178,27 +178,25 @@ function TrendingCarousel({
               gap: 12,
             }}
           >
-            <Link
-              href={`/${linkPrefix}/${item.id}`}
+            <span
               style={{
                 display: "inline-block",
                 padding: "8px 18px",
                 borderRadius: 9999,
                 background: "#2563eb",
                 color: "#fff",
-                textDecoration: "none",
                 fontWeight: 600,
                 fontSize: 13,
               }}
             >
               View details
-            </Link>
+            </span>
 
             <div style={{ display: "flex", gap: 6 }}>
               {items.map((_, i) => (
                 <button
                   key={i}
-                  onClick={() => setIndex(i)}
+                  onClick={(e) => { e.preventDefault(); setIndex(i); }}
                   aria-label={`Go to item ${i + 1}`}
                   style={{
                     width: i === index ? 20 : 8,
@@ -215,7 +213,7 @@ function TrendingCarousel({
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }
@@ -422,8 +420,10 @@ export default function SearchPage() {
             }}
           >
             {results.map((item) => (
-              <article
+              <Link
                 key={item.id}
+                href={`/${mediaType.toLowerCase()}/${item.id}`}
+                className={styles.card}
                 style={{
                   borderRadius: 16,
                   overflow: "hidden",
@@ -435,15 +435,12 @@ export default function SearchPage() {
                   minHeight: 420,
                 }}
               >
-                <Link
-                  href={`/${mediaType.toLowerCase()}/${item.id}`}
-                  style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}
-                >
+                <div style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}>
                   {item.poster_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                       alt={`${item.title} poster`}
-                      style={{ width: "100%", height: 190, objectFit: "cover", display: "block", cursor: "pointer" }}
+                      style={{ width: "100%", height: 190, objectFit: "cover", display: "block" }}
                     />
                   ) : (
                     <div
@@ -459,7 +456,7 @@ export default function SearchPage() {
                       No poster available
                     </div>
                   )}
-                </Link>
+                </div>
                 <div
                   style={{
                     padding: 18,
@@ -483,24 +480,22 @@ export default function SearchPage() {
                     {item.title}
                   </h2>
                   <div style={{ marginTop: 18 }}>
-                    <Link
-                      href={`/${mediaType.toLowerCase()}/${item.id}`}
+                    <span
                       style={{
                         display: "inline-block",
                         padding: "10px 20px",
                         borderRadius: 9999,
                         background: "#2563eb",
                         color: "#fff",
-                        textDecoration: "none",
                         fontWeight: 600,
                         fontSize: 14,
                       }}
                     >
                       View details
-                    </Link>
+                    </span>
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}

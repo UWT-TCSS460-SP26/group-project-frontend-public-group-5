@@ -1,4 +1,5 @@
 import Link from "next/link";
+import styles from "./page.module.css";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ??
   "https://group-project-backend-group-4.onrender.com";
@@ -103,8 +104,10 @@ export default async function BrowsePage() {
             }}
           >
             {movies.map((movie) => (
-              <article
+              <Link
                 key={movie.id}
+                href={`/movie/${movie.id}`}
+                className={styles.card}
                 style={{
                   borderRadius: 16,
                   overflow: "hidden",
@@ -116,15 +119,12 @@ export default async function BrowsePage() {
                   minHeight: 420,
                 }}
               >
-                <a
-                  href={`/movie/${movie.id}`}
-                  style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}
-                >
+                <div style={{ display: "block", minHeight: 190, background: "#f3f4f6" }}>
                   {movie.poster_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={`${movie.title} poster`}
-                      style={{ width: "100%", height: 190, objectFit: "cover", display: "block", cursor: "pointer" }}
+                      style={{ width: "100%", height: 190, objectFit: "cover", display: "block" }}
                     />
                   ) : (
                     <div
@@ -140,7 +140,7 @@ export default async function BrowsePage() {
                       No poster available
                     </div>
                   )}
-                </a>
+                </div>
                 <div
                   style={{
                     padding: 18,
@@ -177,24 +177,22 @@ export default async function BrowsePage() {
                     {movie.overview || "No description available."}
                   </p>
                   <div style={{ marginTop: 18 }}>
-                    <a
-                      href={`/movie/${movie.id}`}
+                    <span
                       style={{
                         display: "inline-block",
                         padding: "10px 20px",
                         borderRadius: 9999,
                         background: "#2563eb",
                         color: "#fff",
-                        textDecoration: "none",
                         fontWeight: 600,
                         fontSize: 14,
                       }}
                     >
                       View details
-                    </a>
+                    </span>
                   </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}
