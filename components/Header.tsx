@@ -7,6 +7,7 @@ import AuthButton from "./AuthButton";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/browse", label: "Browse" },
+  { href: "/featured", label: "Featured" },
   { href: "/search", label: "Search" },
   { href: "/profile", label: "Profile" },
 ];
