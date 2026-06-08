@@ -138,7 +138,7 @@ export default function Home() {
               fontSize: 12,
             }}
           >
-            Group 4's site
+            Group 5 Moving Rating System
           </p>
           <h1
             style={{
