@@ -106,7 +106,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
       <p style={{ margin: "0 0 8px", fontWeight: 600, color: "var(--text)", fontSize: 15 }}>
         {existingRating ? "Your Rating" : "Rate This"}
       </p>
-      <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+      <div style={{ display: "flex", gap: 2, marginBottom: 12 }}>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
@@ -119,6 +119,11 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
               fontSize: 28,
               color: selectedRating !== null && star <= selectedRating ? "var(--star)" : "var(--star-empty)",
               padding: 0,
+              minWidth: 44,
+              minHeight: 44,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             ★
@@ -130,7 +135,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
           onClick={handleSubmit}
           disabled={loading || selectedRating === null}
           style={{
-            padding: "8px 18px",
+            padding: "12px 18px",
             borderRadius: 8,
             background: selectedRating === null ? "var(--border)" : "var(--accent)",
             color: selectedRating === null ? "var(--text-faint)" : "var(--accent-text)",
@@ -147,7 +152,7 @@ export default function RatingWidget({ tmdbId, mediaType, onRatingChange }: Rati
             onClick={handleDelete}
             disabled={loading}
             style={{
-              padding: "8px 14px",
+              padding: "12px 14px",
               borderRadius: 8,
               background: "var(--surface)",
               color: "var(--danger)",

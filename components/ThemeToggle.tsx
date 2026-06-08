@@ -26,7 +26,7 @@ export default function ThemeToggle() {
         background: "none",
         border: "1px solid var(--border)",
         borderRadius: 9999,
-        padding: "7px 11px",
+        padding: "13px 11px",
         cursor: "pointer",
         fontSize: 17,
         lineHeight: 1,
@@ -35,6 +35,7 @@ export default function ThemeToggle() {
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
+        minWidth: 44,
       }}
     >
       {theme === "light" ? "🌙" : "☀️"}

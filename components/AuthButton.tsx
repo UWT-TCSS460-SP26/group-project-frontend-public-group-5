@@ -5,11 +5,12 @@ import styles from "./Header.module.css";
 
 const btnBase: React.CSSProperties = {
   borderRadius: "var(--radius-full)",
-  padding: "var(--sp-2) var(--sp-5)",
+  padding: "var(--sp-3) var(--sp-5)",
   fontFamily: "system-ui, sans-serif",
   fontWeight: 600,
   fontSize: "var(--fs-sm)",
   cursor: "pointer",
+  minHeight: 44,
 };
 
 export default function AuthButton() {

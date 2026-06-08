@@ -131,7 +131,7 @@ export default function MovieDetailPage() {
   }
 
   const inputStyle: React.CSSProperties = {
-    width: "100%", padding: 8, border: "1px solid var(--border)", borderRadius: 8,
+    width: "100%", padding: 12, border: "1px solid var(--border)", borderRadius: 8,
     boxSizing: "border-box", background: "var(--surface)", color: "var(--text)",
   };
   const cardStyle: React.CSSProperties = {
@@ -139,7 +139,7 @@ export default function MovieDetailPage() {
     border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)",
   };
   const btnSecondary: React.CSSProperties = {
-    padding: "8px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)",
+    padding: "12px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)",
     borderRadius: 8, background: "var(--surface)", color: "var(--text-muted)", cursor: "pointer",
   };
 
@@ -239,7 +239,7 @@ export default function MovieDetailPage() {
                       <textarea placeholder="Write your review..." value={editReviewBody} onChange={(e) => setEditReviewBody(e.target.value)} style={{ ...inputStyle, minHeight: 100, fontFamily: "system-ui, sans-serif" }} />
                     </div>
                     <div style={{ display: "flex", gap: 8 }}>
-                      <button onClick={handleUpdateReview} disabled={updatingReview || !editReviewBody.trim()} style={{ padding: "8px 18px", fontSize: 13, fontWeight: 600, background: "var(--accent)", color: "var(--accent-text)", border: "none", borderRadius: 8, cursor: updatingReview ? "not-allowed" : "pointer", opacity: updatingReview ? 0.6 : 1 }}>
+                      <button onClick={handleUpdateReview} disabled={updatingReview || !editReviewBody.trim()} style={{ padding: "12px 18px", fontSize: 13, fontWeight: 600, background: "var(--accent)", color: "var(--accent-text)", border: "none", borderRadius: 8, cursor: updatingReview ? "not-allowed" : "pointer", opacity: updatingReview ? 0.6 : 1 }}>
                         {updatingReview ? "Saving..." : "Save"}
                       </button>
                       <button onClick={() => setEditingReview(false)} disabled={updatingReview} style={btnSecondary}>Cancel</button>
@@ -267,8 +267,8 @@ export default function MovieDetailPage() {
                 <div style={{ marginBottom: 8 }}>
                   <textarea placeholder="Write your review..." value={reviewBody} onChange={(e) => setReviewBody(e.target.value)} style={{ ...inputStyle, minHeight: 100, fontFamily: "system-ui, sans-serif" }} />
                 </div>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <button onClick={handleSubmitReview} disabled={submittingReview} style={{ padding: "8px 18px", fontSize: 13, fontWeight: 600, background: "var(--accent)", color: "var(--accent-text)", border: "none", borderRadius: 8, cursor: submittingReview ? "not-allowed" : "pointer", opacity: submittingReview ? 0.6 : 1 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                  <button onClick={handleSubmitReview} disabled={submittingReview} style={{ padding: "12px 18px", fontSize: 13, fontWeight: 600, background: "var(--accent)", color: "var(--accent-text)", border: "none", borderRadius: 8, cursor: submittingReview ? "not-allowed" : "pointer", opacity: submittingReview ? 0.6 : 1 }}>
                     {submittingReview ? "Posting..." : "Post Review"}
                   </button>
                   {reviewError && <div style={{ background: "var(--error-bg)", color: "var(--error-text)", padding: "12px 16px", borderRadius: 8, fontSize: 13 }}>{reviewError}</div>}

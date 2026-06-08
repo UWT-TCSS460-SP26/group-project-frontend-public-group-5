@@ -113,7 +113,7 @@ export default function ReviewsList({ reviews, onReviewsChange }: ReviewsListPro
           >
             {/* Title + type badge — always visible */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: 12 }}>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--text)", flex: 1, minWidth: 0 }}>
                 {review.media.title || "Unknown Title"}
               </h3>
               <span
@@ -159,22 +159,22 @@ export default function ReviewsList({ reviews, onReviewsChange }: ReviewsListPro
                   <button
                     onClick={() => handleUpdate(review.id)}
                     disabled={updating}
-                    style={{ padding: "8px 18px", fontSize: 13, fontWeight: 600, border: "none", borderRadius: 8, background: "var(--accent)", color: "var(--accent-text)", cursor: updating ? "not-allowed" : "pointer", opacity: updating ? 0.6 : 1 }}
+                    style={{ padding: "12px 18px", fontSize: 13, fontWeight: 600, border: "none", borderRadius: 8, background: "var(--accent)", color: "var(--accent-text)", cursor: updating ? "not-allowed" : "pointer", opacity: updating ? 0.6 : 1 }}
                   >
                     {updating ? "Saving..." : "Save"}
                   </button>
                   <button
                     onClick={cancelEdit}
                     disabled={updating}
-                    style={{ padding: "8px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)", borderRadius: 8, background: "var(--surface)", color: "var(--text-muted)", cursor: updating ? "not-allowed" : "pointer" }}
+                    style={{ padding: "12px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)", borderRadius: 8, background: "var(--surface)", color: "var(--text-muted)", cursor: updating ? "not-allowed" : "pointer" }}
                   >
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "16px" }}>
-                <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "16px", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 180 }}>
                   {review.title && (
                     <h4 style={{ margin: "0 0 8px 0", fontSize: 14, fontWeight: 600, color: "var(--text-muted)" }}>
                       &ldquo;{review.title}&rdquo;
@@ -183,7 +183,7 @@ export default function ReviewsList({ reviews, onReviewsChange }: ReviewsListPro
                   <p style={{ margin: "0 0 12px 0", fontSize: 14, lineHeight: 1.5, color: "var(--text-muted)" }}>
                     {review.body}
                   </p>
-                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
                     <span style={{ fontSize: 12, color: "var(--text-subtle)" }}>
                       {new Date(review.createdAt).toLocaleDateString()}
                     </span>
@@ -198,14 +198,14 @@ export default function ReviewsList({ reviews, onReviewsChange }: ReviewsListPro
                 <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
                   <button
                     onClick={() => startEdit(review)}
-                    style={{ padding: "8px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)", borderRadius: 8, background: "var(--surface)", color: "var(--text-muted)", cursor: "pointer" }}
+                    style={{ padding: "12px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)", borderRadius: 8, background: "var(--surface)", color: "var(--text-muted)", cursor: "pointer" }}
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(review.id)}
                     disabled={deletingId === review.id}
-                    style={{ padding: "8px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)", borderRadius: 8, background: "var(--surface)", color: "var(--danger)", cursor: deletingId === review.id ? "not-allowed" : "pointer", opacity: deletingId === review.id ? 0.6 : 1 }}
+                    style={{ padding: "12px 14px", fontSize: 13, fontWeight: 600, border: "1px solid var(--border)", borderRadius: 8, background: "var(--surface)", color: "var(--danger)", cursor: deletingId === review.id ? "not-allowed" : "pointer", opacity: deletingId === review.id ? 0.6 : 1 }}
                   >
                     {deletingId === review.id ? "Deleting..." : "Delete"}
                   </button>

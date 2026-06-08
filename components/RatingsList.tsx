@@ -110,7 +110,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
           >
             {/* Title + type badge — always visible */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: 12 }}>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--text)" }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: "var(--text)", flex: 1, minWidth: 0 }}>
                 {rating.media.title || "Unknown Title"}
               </h3>
               <span
@@ -129,7 +129,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
 
             {editingId === rating.id ? (
               <div>
-                <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
+                <div style={{ display: "flex", gap: 2, marginBottom: 12 }}>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
@@ -142,6 +142,11 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                         fontSize: 28,
                         color: star <= editScore ? "var(--star)" : "var(--star-empty)",
                         padding: 0,
+                        minWidth: 44,
+                        minHeight: 44,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       ★
@@ -153,7 +158,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                     onClick={() => handleUpdate(rating.id)}
                     disabled={updating || editScore === 0}
                     style={{
-                      padding: "8px 18px",
+                      padding: "12px 18px",
                       fontSize: 13,
                       fontWeight: 600,
                       border: "none",
@@ -170,7 +175,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                     onClick={cancelEdit}
                     disabled={updating}
                     style={{
-                      padding: "8px 14px",
+                      padding: "12px 14px",
                       fontSize: 13,
                       fontWeight: 600,
                       border: "1px solid var(--border)",
@@ -185,8 +190,8 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                 </div>
               </div>
             ) : (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "16px" }}>
-                <div style={{ flex: 1 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "16px", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 180 }}>
                   {/* Star rating */}
                   <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: 12 }}>
                     <span style={{ fontSize: 18, color: "var(--star)" }}>
@@ -198,7 +203,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                     </span>
                   </div>
                   {/* Footer: date + view link */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
                     <span style={{ fontSize: 12, color: "var(--text-subtle)" }}>
                       {new Date(rating.createdAt).toLocaleDateString()}
                     </span>
@@ -215,7 +220,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                   <button
                     onClick={() => startEdit(rating)}
                     style={{
-                      padding: "8px 14px",
+                      padding: "12px 14px",
                       fontSize: 13,
                       fontWeight: 600,
                       border: "1px solid var(--border)",
@@ -231,7 +236,7 @@ export default function RatingsList({ ratings, onRatingsChange }: RatingsListPro
                     onClick={() => handleDelete(rating.id)}
                     disabled={deletingId === rating.id}
                     style={{
-                      padding: "8px 14px",
+                      padding: "12px 14px",
                       fontSize: 13,
                       fontWeight: 600,
                       border: "1px solid var(--border)",

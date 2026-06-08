@@ -72,8 +72,8 @@ function TrendingCarousel({
         top: "50%",
         transform: "translateY(-50%)",
         zIndex: 2,
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         borderRadius: "50%",
         border: "1px solid var(--border)",
         background: disabled ? "transparent" : "var(--surface)",
@@ -137,20 +137,18 @@ function TrendingCarousel({
 
         <Link
           href={`/${linkPrefix}/${item.id}`}
-          className={styles.card}
+          className={`${styles.card} ${styles.carouselCard}`}
           style={{
             background: "var(--surface)",
             borderRadius: "var(--radius-card)",
             border: "1px solid var(--border)",
             boxShadow: "var(--shadow-xl)",
             overflow: "hidden",
-            display: "flex",
-            minHeight: 200,
             opacity: fading ? 0 : 1,
             transition: "opacity 0.18s ease, transform 0.2s ease, box-shadow 0.2s ease",
           }}
         >
-          <div style={{ flexShrink: 0, width: 140, background: "var(--surface-2)", display: "block" }}>
+          <div className={styles.carouselPoster}>
             {item.poster_path ? (
               <img
                 src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
@@ -252,7 +250,7 @@ function TrendingCarousel({
                 View details
               </span>
 
-              <div style={{ display: "flex", gap: 6 }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                 {items.map((_, i) => (
                   <button
                     key={i}
@@ -261,6 +259,8 @@ function TrendingCarousel({
                     style={{
                       width: i === index ? 20 : 8,
                       height: 8,
+                      minHeight: 32,
+                      minWidth: 18,
                       borderRadius: 9999,
                       border: "none",
                       background: i === index ? "var(--accent)" : "var(--border)",
