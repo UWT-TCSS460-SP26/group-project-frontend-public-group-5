@@ -55,3 +55,10 @@ What really surprised me when working on someone else's API is we would need to 
 What you learned about working with AI coding agents that you didn't know in Week 1:
 
 AI coding agents are very useful but also in a way are very detrimental to your learning sometimes along with productivity. Sure, you can push out a lot of code really quickly, but if you don't take the time to actually understand your intentions, why you're doing something, why you made the architectural decisions that you made, then you'll never be able to make real productions grade systems and I think that is an important skill. Now, it is also really good for writing code, but I also needed to direct how it wrote code in a lot of ways as well. Overall though, it was a good learning experience.
+
+### Lighthouse
+To improve the Lighthouse performance scores, we made targeted image loading optimizations across both pages. On the browse page, we switched the TMDB poster images from the w500 size variant down to w342, which is still larger than the cards' display width of ~280px but avoids downloading unnecessarily large images. 
+
+We also added loading="lazy" to all images beyond the first three cards so the browser doesn't fetch off-screen images on initial load, and applied fetchPriority="high" to the first image to signal to the browser that it should be loaded as early as possible, directly improving the Largest Contentful Paint (LCP) metric. 
+
+On the homepage, we reduced the number of backdrop images used in the scrolling animation from 20 down to 10, which halves the total image payload while still providing a seamless loop, and dropped the TMDB size variant from w1280 to w780 since each image only occupies roughly 20% of the viewport width and the larger size was significant overkill.
